@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDistrictRegion, regionProfiles } from "@/lib/regions";
+import { getDistrictGuide } from "@/lib/district-content";
+import { getRegionHeroImage } from "@/lib/region-assets";
 
 type Props = { params: Promise<{ sido: string; sigungu: string }> };
 
@@ -16,8 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {};
   const { region, district } = data;
   return {
-    title: `${district} 이사업체 비교견적 | 포장이사·원룸이사 | 올바른이사`,
-    description: `${region.name} ${district} 이사 준비 시 확인할 주거환경, 차량 접근, 교통, 추가비용 조건과 포장이사·원룸이사 비교견적 정보를 확인하세요.`,
+    title: `${district} 이사업체 비교견적 | 포장이사·이사 준비 가이드 | 올바른이사`,
+    description: `${region.name} ${district} 이사 준비 시 확인할 주거환경, 차량 접근, 교통, 전입신고, 등기부 확인, 전기·도시가스 이전과 포장이사 비교견적 정보를 정리했습니다.`,
   };
 }
 
@@ -26,34 +28,63 @@ export default async function DistrictPage({ params }: Props) {
   const data = getDistrictRegion(sido, sigungu);
   if (!data) notFound();
   const { region, district } = data;
+  const local = getDistrictGuide(region.name, district);
+  const heroImage = getRegionHeroImage(sido, district);
 
   return (
     <>
       <header className="site-header">
         <div className="wrap header-inner">
           <a href="/" className="brand">올바른이사</a>
-          <nav className="nav"><a href="/estimate">비교견적</a><a href="/#calendar">손없는날·날씨</a><a href="/#region">지역별 이사</a></nav>
+          <nav className="nav">
+            <a href="/estimate">비교견적</a>
+            <a href="/#calendar">손없는날·날씨</a>
+            <a href="/#region">지역별 이사</a>
+          </nav>
         </div>
       </header>
+
       <main>
         <section className="sub-hero region-hero">
-          <div className="wrap">
-            <div className="breadcrumb"><a href="/">홈</a><span>›</span><span>{region.name}</span><span>›</span><strong>{district}</strong></div>
-            <span className="eyebrow">{region.name} 지역별 이사</span>
-            <h1>{district} 이사업체,<br/>가격보다 조건부터 비교하세요.</h1>
-            <p>{region.summary}</p>
-            <div className="hero-actions"><a className="primary-link" href={`/estimate?region=${encodeURIComponent(region.name)}&district=${encodeURIComponent(district)}`}>{district} 무료 비교견적</a><a className="secondary-link" href="/#calendar">손없는날·날씨 보기</a></div>
+          <div className="wrap region-hero-grid">
+            <div className="region-hero-copy">
+              <div className="breadcrumb"><a href="/">홈</a><span>›</span><span>{region.name}</span><span>›</span><strong>{district}</strong></div>
+              <span className="eyebrow">{region.name} 지역별 이사</span>
+              <h1>{district} 이사업체,<br/>가격보다 조건부터 비교하세요.</h1>
+              <p>{local.localIntro}</p>
+              <div className="hero-actions">
+                <a className="primary-link" href={`/estimate?region=${encodeURIComponent(region.name)}&district=${encodeURIComponent(district)}`}>{district} 무료 비교견적</a>
+                <a className="secondary-link" href="/#calendar">손없는날·날씨 보기</a>
+              </div>
+            </div>
+
+            <div className="region-hero-media" aria-label={`${district} 지역 대표 이미지`}>
+              {heroImage ? (
+                <img src={heroImage} alt={`${region.name} ${district} 이사 지역 이미지`} />
+              ) : (
+                <div className="region-image-placeholder">
+                  <strong>{district} 대표 이미지 영역</strong>
+                  <span>lib/region-assets.ts에 이미지 URL을 입력하세요.</span>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
         <section className="section white">
           <div className="wrap">
             <h2 className="section-title">{district} 이사에서 먼저 볼 조건</h2>
-            <p className="section-desc">같은 지역에서도 건물 형태와 차량 접근 조건에 따라 필요한 인원과 작업시간이 달라질 수 있습니다.</p>
+            <p className="section-desc">{region.summary}</p>
             <div className="tips-grid region-tips">
               <div className="card"><strong>주거 형태</strong><p>{region.housing}</p></div>
               <div className="card"><strong>차량 접근</strong><p>{region.access}</p></div>
               <div className="card"><strong>이동 시간</strong><p>{region.traffic}</p></div>
+            </div>
+            <div className="local-note">
+              <strong>{district} 현장 체크</strong>
+              <ul className="check-list">
+                {local.localChecklist.map((item) => <li key={item}>{item}</li>)}
+              </ul>
             </div>
           </div>
         </section>
@@ -63,10 +94,116 @@ export default async function DistrictPage({ params }: Props) {
             <div>
               <span className="eyebrow">견적 비교 포인트</span>
               <h2 className="section-title">{district} 포장이사 견적에서 확인할 항목</h2>
-              <p>포장이사는 단순히 총액만 비교하기보다 기본 인원, 차량 톤수, 포장재, 정리 범위, 사다리차와 엘리베이터 비용이 포함됐는지 나눠서 보는 것이 좋습니다.</p>
-              <ul className="check-list"><li>작업 인원과 차량 톤수</li><li>사다리차 또는 엘리베이터 비용</li><li>주차 위치에서 현관까지 운반거리</li><li>에어컨·TV·대형가구 분해조립</li><li>당일 발생 가능한 추가금 기준</li></ul>
+              <p>{local.movingNote}</p>
+              <ul className="check-list">
+                <li>작업 인원과 차량 톤수</li>
+                <li>사다리차 또는 엘리베이터 비용</li>
+                <li>주차 위치에서 현관까지 운반거리</li>
+                <li>에어컨·TV·대형가구 분해조립</li>
+                <li>당일 발생 가능한 추가금 기준</li>
+              </ul>
             </div>
-            <div className="highlight-card"><strong>{district} 이사 팁</strong><p>{region.tip}</p><a href="/estimate">조건 입력하고 비교견적 받기 →</a></div>
+            <div className="highlight-card">
+              <strong>{district} 이사 팁</strong>
+              <p>{region.tip}</p>
+              <a href="/estimate">조건 입력하고 비교견적 받기 →</a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section white">
+          <div className="wrap">
+            <span className="eyebrow">이사 후 행정</span>
+            <h2 className="section-title">{district} 전입신고는 어떻게 하나요?</h2>
+            <p className="section-desc">전입신고는 실제 거주지를 옮긴 뒤 주소를 변경하는 절차입니다. 온라인은 정부24, 방문은 새 주소지 관할 읍·면·동 주민센터에서 진행할 수 있습니다.</p>
+            <div className="guide-grid">
+              <article className="guide-card">
+                <span className="guide-step">01</span>
+                <strong>정부24 또는 주민센터</strong>
+                <p>본인은 정부24에서 온라인 신청이 가능하며, 방문 신청은 {district} 내 새 주소지 관할 주민센터에서 할 수 있습니다.</p>
+              </article>
+              <article className="guide-card">
+                <span className="guide-step">02</span>
+                <strong>전입 후 14일 이내</strong>
+                <p>전입한 날부터 14일 이내 신고하는 것이 원칙입니다. 방문 시에는 신분증과 세대 관계에 따라 필요한 서류를 확인하세요.</p>
+              </article>
+              <article className="guide-card">
+                <span className="guide-step">03</span>
+                <strong>임차인이라면 날짜도 함께 확인</strong>
+                <p>전세·월세 계약자는 전입신고와 별개로 확정일자, 보증금 보호 요건과 선순위 권리관계를 함께 확인하는 것이 좋습니다.</p>
+              </article>
+            </div>
+            <div className="official-links">
+              <a href="https://www.gov.kr/mw/AA020InfoCappView.do?CappBizCD=13100000016" target="_blank" rel="noreferrer">정부24 전입신고 안내 ↗</a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="wrap">
+            <span className="eyebrow">전세 계약 안전 확인</span>
+            <h2 className="section-title">확정일자·전세권 설정은 무엇이 다른가요?</h2>
+            <p className="section-desc">전세 계약에서는 ‘전입신고와 확정일자’와 ‘전세권 설정등기’를 같은 절차로 혼동하기 쉽습니다. 두 제도는 성격과 절차가 다르므로 계약 상황에 맞게 확인해야 합니다.</p>
+            <div className="compare-grid">
+              <div className="card">
+                <strong>전입신고 + 확정일자</strong>
+                <p>주택 임차인이 보증금 보호를 준비할 때 일반적으로 함께 확인하는 절차입니다. 실제 점유, 전입신고, 확정일자와 계약 내용에 따라 보호 범위가 달라질 수 있습니다.</p>
+              </div>
+              <div className="card">
+                <strong>전세권 설정등기</strong>
+                <p>등기부에 전세권을 직접 설정하는 물권등기입니다. 계약당사자의 협조와 등기절차가 필요하므로 비용·필요서류·권리관계를 사전에 확인하는 것이 좋습니다.</p>
+              </div>
+            </div>
+            <div className="warning-box">이 부분은 일반적인 이사 준비 안내입니다. 보증금 규모나 선순위 담보권, 임대인의 채무 상황 등에 따라 법률적 판단이 달라질 수 있으므로 중요한 계약은 공인중개사·법무사·변호사 등 전문가 확인을 권합니다.</div>
+          </div>
+        </section>
+
+        <section className="section white">
+          <div className="wrap">
+            <span className="eyebrow">등기부 확인</span>
+            <h2 className="section-title">등기사항증명서는 이 세 가지만 먼저 보세요</h2>
+            <div className="guide-grid">
+              <article className="guide-card">
+                <span className="guide-step">갑구</span>
+                <strong>소유자가 누구인지</strong>
+                <p>계약하려는 임대인과 등기부상 소유자가 같은지, 소유권 이전·압류·가압류 같은 표시가 있는지 확인합니다.</p>
+              </article>
+              <article className="guide-card">
+                <span className="guide-step">을구</span>
+                <strong>근저당권 등 담보권</strong>
+                <p>은행 근저당권과 전세권 등 소유권 이외 권리를 확인합니다. 채권최고액과 선순위 권리를 보증금과 함께 봐야 합니다.</p>
+              </article>
+              <article className="guide-card">
+                <span className="guide-step">주소</span>
+                <strong>계약할 집과 같은 물건인지</strong>
+                <p>동·호수와 집합건물 여부를 확인해 실제 계약 대상과 발급한 등기사항증명서가 일치하는지 먼저 확인합니다.</p>
+              </article>
+            </div>
+            <div className="official-links">
+              <a href="https://www.iros.go.kr" target="_blank" rel="noreferrer">대한민국 법원 인터넷등기소 ↗</a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section utility-section">
+          <div className="wrap">
+            <span className="eyebrow">이삿날 생활요금</span>
+            <h2 className="section-title">전기·도시가스 이전도 미리 준비하세요</h2>
+            <p className="section-desc">이사 당일 계량기와 사용량을 확인해 기존 주소의 요금을 정산하고 새 주소의 사용 신청·명의변경 여부를 확인하면 좋습니다.</p>
+            <div className="utility-grid">
+              <article className="utility-card">
+                <div className="utility-number">123</div>
+                <strong>한국전력 고객센터</strong>
+                <p>주택용 전기 이사정산과 전기 관련 상담은 국번 없이 123에서 확인할 수 있습니다. 아파트 관리비에 전기요금이 포함되는 경우에는 관리사무소 정산방식을 먼저 확인하세요.</p>
+                <a href="https://home.kepco.co.kr" target="_blank" rel="noreferrer">한전 확인하기 ↗</a>
+              </article>
+              <article className="utility-card">
+                <div className="utility-number small-number">주소별 확인</div>
+                <strong>{district} 도시가스 전출·전입</strong>
+                <p>도시가스는 같은 {region.name} 안에서도 공급회사가 달라질 수 있습니다. 이사 전에 주소 기준 관할 고객센터를 확인해 전출 정산, 철거·연결, 명의변경을 예약하세요.</p>
+                <a href="https://www.citygas.or.kr/company/find/index.jsp" target="_blank" rel="noreferrer">도시가스 고객센터 찾기 ↗</a>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -77,7 +214,7 @@ export default async function DistrictPage({ params }: Props) {
               <div className="card"><strong>{district} 포장이사</strong><p>포장·운반·정리 범위와 작업 인원, 추가 서비스 포함 여부를 중심으로 비교합니다.</p></div>
               <div className="card"><strong>{district} 원룸이사</strong><p>짐 양과 차량 크기, 엘리베이터 유무, 기사 도움 범위를 중심으로 비교합니다.</p></div>
               <div className="card"><strong>{district} 일반이사</strong><p>직접 포장 후 운송 중심으로 진행할 때 차량·운반 인력 비용을 비교합니다.</p></div>
-              <div className="card"><strong>{district} 사무실이사</strong><p>집기·OA기기·보안자료와 업무 중단시간을 고려해 작업계획을 비교합니다.</p></div>
+              <div className="card"><strong>{district} 사무실이사</strong><p>{local.officeNote}</p></div>
             </div>
           </div>
         </section>
@@ -86,7 +223,14 @@ export default async function DistrictPage({ params }: Props) {
           <div className="wrap"><div className="cta"><div><h2>{district} 이사를 준비하고 계신가요?</h2><p>날짜와 작업조건을 함께 입력하면 업체별 견적을 비교하기 쉬워집니다.</p></div><a href="/estimate">무료 비교견적 시작</a></div></div>
         </section>
       </main>
-      <footer className="footer"><div className="wrap"><strong>올바른이사</strong><p>{region.name} {district} 지역의 이사 준비 정보와 비교견적을 제공하는 안내 페이지입니다.</p></div></footer>
+
+      <footer className="footer">
+        <div className="wrap">
+          <strong>올바른이사</strong>
+          <p>{region.name} {district} 지역의 이사 준비 정보와 비교견적을 제공하는 안내 페이지입니다.</p>
+          <p>행정·등기·생활요금 정보는 변경될 수 있으므로 실제 신청 전 각 공식 기관에서 최신 내용을 다시 확인하세요.</p>
+        </div>
+      </footer>
     </>
   );
 }
