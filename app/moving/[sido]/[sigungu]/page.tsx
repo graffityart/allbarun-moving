@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { region, district } = data;
   return {
     title: `${district} 이사업체 비교견적 | 손없는날·날씨·이사 준비 | 올바른이사`,
-    description: `${region.name} ${district} 이사 준비 시 확인할 주거환경, 차량 접근, 손없는날, 지역 날씨, 전입신고, 등기부 확인, 전기·도시가스 이전과 포장이사 비교견적 정보를 확인하세요.`,
+    description: `${region.name} ${district}의 생활권별 이사 특징, 차량 접근, 손없는날, 지역 날씨, 전입신고, 등기부 확인, 전기·도시가스 이전과 포장이사 비교 정보를 확인하세요.`,
   };
 }
 
@@ -60,9 +60,7 @@ export default async function DistrictPage({ params }: Props) {
             </div>
 
             <div className="region-hero-media" aria-label={`${district} 지역 대표 이미지`}>
-              {heroImage ? (
-                <img src={heroImage} alt={`${region.name} ${district} 이사 지역 이미지`} />
-              ) : (
+              {heroImage ? <img src={heroImage} alt={`${region.name} ${district} 이사 지역 이미지`} /> : (
                 <div className="region-image-placeholder">
                   <strong>{district} 대표 이미지 영역</strong>
                   <span>lib/region-assets.ts에 이미지 URL을 입력하세요.</span>
@@ -89,14 +87,31 @@ export default async function DistrictPage({ params }: Props) {
           </div>
         </section>
 
+        <section className="section local-area-section">
+          <div className="wrap">
+            <div className="local-area-head">
+              <div>
+                <span className="eyebrow">생활권별 차이</span>
+                <h2 className="section-title">{district} 안에서도 이사 조건이 달라집니다</h2>
+                <p className="section-desc">지역 이름만 같다고 견적 조건이 같은 것은 아닙니다. 아파트 밀집지역, 업무지구, 저층주택가는 차량 진입과 작업 방식이 서로 다릅니다.</p>
+              </div>
+              <div className="factor-pills">{local.localFactors?.map((item) => <span key={item}>{item}</span>)}</div>
+            </div>
+            <div className="neighborhood-grid">
+              {local.neighborhoods?.map((item, i) => {
+                const [name, desc] = item.split(":");
+                return <article className="neighborhood-card" key={item}><span>{String(i + 1).padStart(2, "0")}</span><strong>{name}</strong><p>{desc || "건물 형태와 접근 조건을 함께 확인하세요."}</p></article>;
+              })}
+            </div>
+          </div>
+        </section>
+
         <section className="section region-calendar-section" id="local-calendar">
           <div className="wrap">
             <div className="region-calendar-heading">
-              <div>
-                <span className="eyebrow">이사 날짜 선택</span>
-                <h2 className="section-title">{district} 손없는날과 지역 날씨를 같이 확인하세요</h2>
-                <p className="section-desc">손없는날뿐 아니라 {district}의 예상 강수확률과 기온을 함께 보면 이사차량 진입, 포장재 준비, 작업시간을 정하는 데 더 도움이 됩니다.</p>
-              </div>
+              <span className="eyebrow">이사 날짜 선택</span>
+              <h2 className="section-title">{district} 손없는날과 지역 날씨를 같이 확인하세요</h2>
+              <p className="section-desc">손없는날뿐 아니라 {district}의 예상 강수확률과 기온을 함께 보면 이사차량 진입, 포장재 준비, 작업시간을 정하는 데 더 도움이 됩니다.</p>
             </div>
             <MovingCalendar regionName={region.name} districtName={district} lockRegion />
             <div className="region-source-note"><strong>안내:</strong> 손없는날은 전통적인 음력 기준 참고 정보이며, 날씨는 단기 예보입니다. 실제 이사 전에는 최신 예보와 현장 상황을 다시 확인하세요.</div>
@@ -109,13 +124,7 @@ export default async function DistrictPage({ params }: Props) {
               <span className="eyebrow">견적 비교 포인트</span>
               <h2 className="section-title">{district} 포장이사 견적에서 확인할 항목</h2>
               <p>{local.movingNote}</p>
-              <ul className="check-list">
-                <li>작업 인원과 차량 톤수</li>
-                <li>사다리차 또는 엘리베이터 비용</li>
-                <li>주차 위치에서 현관까지 운반거리</li>
-                <li>에어컨·TV·대형가구 분해조립</li>
-                <li>당일 발생 가능한 추가금 기준</li>
-              </ul>
+              <ul className="check-list"><li>작업 인원과 차량 톤수</li><li>사다리차 또는 엘리베이터 비용</li><li>주차 위치에서 현관까지 운반거리</li><li>에어컨·TV·대형가구 분해조립</li><li>당일 발생 가능한 추가금 기준</li></ul>
             </div>
             <div className="highlight-card"><strong>{district} 이사 팁</strong><p>{region.tip}</p><a href="/estimate">조건 입력하고 비교견적 받기 →</a></div>
           </div>
@@ -184,9 +193,7 @@ export default async function DistrictPage({ params }: Props) {
           </div>
         </section>
 
-        <section className="section white">
-          <div className="wrap"><div className="cta"><div><h2>{district} 이사를 준비하고 계신가요?</h2><p>날짜와 작업조건을 함께 입력해 업체별 견적을 비교해보세요.</p></div><a href="/estimate">무료 비교견적 시작</a></div></div>
-        </section>
+        <section className="section white"><div className="wrap"><div className="cta"><div><h2>{district} 이사를 준비하고 계신가요?</h2><p>날짜와 작업조건을 함께 입력해 업체별 견적을 비교해보세요.</p></div><a href="/estimate">무료 비교견적 시작</a></div></div></section>
       </main>
 
       <footer className="footer"><div className="wrap"><strong>올바른이사</strong><p>{region.name} {district} 지역의 이사 준비 정보와 비교견적을 제공하는 안내 페이지입니다.</p><p>행정·등기·생활요금·날씨 정보는 변경될 수 있으므로 실제 신청과 이사 전에 최신 정보를 다시 확인하세요.</p></div></footer>
