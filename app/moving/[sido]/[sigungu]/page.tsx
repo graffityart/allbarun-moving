@@ -4,6 +4,7 @@ import MovingCalendar from "@/components/MovingCalendar";
 import { getDistrictRegion, regionProfiles } from "@/lib/regions";
 import { getDistrictGuide } from "@/lib/district-content";
 import { getRegionHeroImage } from "@/lib/region-assets";
+import { getRegionFaq } from "@/lib/region-faq";
 
 type Props = { params: Promise<{ sido: string; sigungu: string }> };
 
@@ -18,9 +19,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = getDistrictRegion(sido, sigungu);
   if (!data) return {};
   const { region, district } = data;
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://example.com").replace(/\/$/, "");
+  const canonical = `${base}/moving/${encodeURIComponent(sido)}/${encodeURIComponent(district)}`;
   return {
     title: `${district} 이사업체 비교견적 | 손없는날·날씨·이사 준비 | 올바른이사`,
     description: `${region.name} ${district}의 생활권별 이사 특징, 차량 접근, 손없는날, 지역 날씨, 전입신고, 등기부 확인, 전기·도시가스 이전과 포장이사 비교 정보를 확인하세요.`,
+    alternates: { canonical },
   };
 }
 
@@ -31,9 +35,35 @@ export default async function DistrictPage({ params }: Props) {
   const { region, district } = data;
   const local = getDistrictGuide(region.name, district);
   const heroImage = getRegionHeroImage(sido, district);
+  const faqs = getRegionFaq(region.name, district);
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://example.com").replace(/\/$/, "");
+  const pageUrl = `${base}/moving/${encodeURIComponent(sido)}/${encodeURIComponent(district)}`;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "홈", item: base },
+      { "@type": "ListItem", position: 2, name: `${region.name} 이사`, item: `${base}/#region` },
+      { "@type": "ListItem", position: 3, name: `${district} 이사`, item: pageUrl },
+    ],
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  };
 
   return (
     <div className="region-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+
       <header className="site-header">
         <div className="wrap header-inner">
           <a href="/" className="brand">올바른이사</a>
@@ -193,7 +223,23 @@ export default async function DistrictPage({ params }: Props) {
           </div>
         </section>
 
-        <section className="section white"><div className="wrap"><div className="cta"><div><h2>{district} 이사를 준비하고 계신가요?</h2><p>날짜와 작업조건을 함께 입력해 업체별 견적을 비교해보세요.</p></div><a href="/estimate">무료 비교견적 시작</a></div></div></section>
+        <section className="section region-faq-section" aria-labelledby="region-faq-title">
+          <div className="wrap">
+            <span className="eyebrow">자주 묻는 질문</span>
+            <h2 className="section-title" id="region-faq-title">{district} 이사 준비 FAQ</h2>
+            <p className="section-desc">{region.name} {district}에서 이사 날짜와 업체를 비교할 때 자주 확인하는 내용을 정리했습니다.</p>
+            <div className="region-faq-list">
+              {faqs.map((faq, index) => (
+                <details className="region-faq-item" key={faq.question} open={index === 0}>
+                  <summary><span>Q</span>{faq.question}</summary>
+                  <div className="region-faq-answer"><span>A</span><p>{faq.answer}</p></div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section white"><div className="wrap"><div className="cta"><div><h2>{district} 이사를 준비하고 계신가요?</h2><p>날짜와 작업조건을 함께 입력해 업체별 견적을 비교해보세요.</p></div><a href={`/estimate?region=${encodeURIComponent(region.name)}&district=${encodeURIComponent(district)}`}>무료 비교견적 시작</a></div></div></section>
       </main>
 
       <footer className="footer"><div className="wrap"><strong>올바른이사</strong><p>{region.name} {district} 지역의 이사 준비 정보와 비교견적을 제공하는 안내 페이지입니다.</p><p>행정·등기·생활요금·날씨 정보는 변경될 수 있으므로 실제 신청과 이사 전에 최신 정보를 다시 확인하세요.</p></div></footer>
