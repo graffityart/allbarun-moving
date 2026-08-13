@@ -6,6 +6,10 @@ import { getDistrictGuide } from "@/lib/district-content";
 import { getGyeonggiGuide } from "@/lib/gyeonggi-content";
 import { getIncheonGuide } from "@/lib/incheon-content";
 import { getBusanGuide } from "@/lib/busan-content";
+import { getDaeguGuide } from "@/lib/daegu-content";
+import { getDaejeonGuide } from "@/lib/daejeon-content";
+import { getGwangjuGuide } from "@/lib/gwangju-content";
+import { getUlsanGuide } from "@/lib/ulsan-content";
 import { getRegionHeroImage } from "@/lib/region-assets";
 import { getRegionFaq } from "@/lib/region-faq";
 
@@ -43,6 +47,10 @@ export default async function DistrictPage({ params }: Props) {
     region.name === "경기" ? getGyeonggiGuide(district) :
     region.name === "인천" ? getIncheonGuide(district) :
     region.name === "부산" ? getBusanGuide(district) :
+    region.name === "대구" ? getDaeguGuide(district) :
+    region.name === "대전" ? getDaejeonGuide(district) :
+    region.name === "광주" ? getGwangjuGuide(district) :
+    region.name === "울산" ? getUlsanGuide(district) :
     undefined;
   const local = specialGuide ?? getDistrictGuide(region.name, district);
   const heroImage = getRegionHeroImage(sido, district);
