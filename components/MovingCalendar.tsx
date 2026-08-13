@@ -23,6 +23,12 @@ type WeatherDay = {
   code: number;
 };
 
+type Props = {
+  regionName?: string;
+  districtName?: string;
+  lockRegion?: boolean;
+};
+
 function weatherText(code: number) {
   if (code === 0) return "맑음";
   if ([1, 2].includes(code)) return "대체로 맑음";
@@ -43,12 +49,13 @@ function isHandsFreeDay(date: Date) {
   return lunar.day % 10 === 9 || lunar.day % 10 === 0;
 }
 
-export default function MovingCalendar() {
+export default function MovingCalendar({ regionName, districtName, lockRegion = false }: Props) {
   const today = useMemo(() => new Date(), []);
   const [monthOffset, setMonthOffset] = useState(0);
   const [location, setLocation] = useState(LOCATIONS[0]);
   const [weather, setWeather] = useState<WeatherDay[]>([]);
   const [loading, setLoading] = useState(true);
+  const displayArea = districtName ? `${regionName ?? ""} ${districtName}`.trim() : location.name;
 
   const viewDate = useMemo(
     () => new Date(today.getFullYear(), today.getMonth() + monthOffset, 1),
@@ -68,16 +75,30 @@ export default function MovingCalendar() {
 
   useEffect(() => {
     const controller = new AbortController();
+    async function resolveLocation() {
+      if (!regionName && !districtName) return location;
+      try {
+        const query = encodeURIComponent(`${districtName ?? ""} ${regionName ?? ""} 대한민국`.trim());
+        const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=1&language=ko&format=json`, { signal: controller.signal });
+        if (!res.ok) throw new Error("geocoding failed");
+        const data = await res.json();
+        const hit = data?.results?.[0];
+        if (hit) return { name: displayArea, lat: hit.latitude, lon: hit.longitude };
+      } catch (error) {
+        if ((error as Error).name === "AbortError") throw error;
+      }
+      return LOCATIONS.find((item) => item.name === regionName) || LOCATIONS[0];
+    }
+
     async function loadWeather() {
       setLoading(true);
       try {
+        const resolved = await resolveLocation();
+        if (regionName || districtName) setLocation(resolved);
         const url = new URL("https://api.open-meteo.com/v1/forecast");
-        url.searchParams.set("latitude", String(location.lat));
-        url.searchParams.set("longitude", String(location.lon));
-        url.searchParams.set(
-          "daily",
-          "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"
-        );
+        url.searchParams.set("latitude", String(resolved.lat));
+        url.searchParams.set("longitude", String(resolved.lon));
+        url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max");
         url.searchParams.set("timezone", "Asia/Seoul");
         url.searchParams.set("forecast_days", "16");
 
@@ -100,21 +121,21 @@ export default function MovingCalendar() {
     }
     loadWeather();
     return () => controller.abort();
-  }, [location]);
+  }, [regionName, districtName, displayArea]);
 
   const goodDays = days.filter((d): d is Date => Boolean(d && isHandsFreeDay(d)));
 
   return (
-    <div className="calendar-shell">
+    <div className="calendar-shell trusted-calendar">
       <div className="calendar-card">
         <div className="calendar-head">
           <div>
             <div className="small">이사 날짜 고르기</div>
             <h3>{viewDate.getFullYear()}년 {viewDate.getMonth() + 1}월 손없는날</h3>
           </div>
-          <div style={{ display: "flex", gap: 6 }}>
-            <button className="field" style={{ width: 44, padding: 0 }} onClick={() => setMonthOffset((v) => v - 1)} aria-label="이전 달">‹</button>
-            <button className="field" style={{ width: 44, padding: 0 }} onClick={() => setMonthOffset((v) => v + 1)} aria-label="다음 달">›</button>
+          <div className="calendar-nav">
+            <button className="calendar-nav-btn" onClick={() => setMonthOffset((v) => v - 1)} aria-label="이전 달">‹</button>
+            <button className="calendar-nav-btn" onClick={() => setMonthOffset((v) => v + 1)} aria-label="다음 달">›</button>
           </div>
         </div>
         <div className="calendar-grid">
@@ -141,14 +162,16 @@ export default function MovingCalendar() {
         <div className="weather-top">
           <div>
             <div className="small">이사 날씨 미리보기</div>
-            <strong style={{ fontSize: 23 }}>{location.name} 16일 예보</strong>
+            <strong className="weather-title">{displayArea} 16일 예보</strong>
           </div>
-          <select className="field" style={{ width: 110 }} value={location.name} onChange={(e) => setLocation(LOCATIONS.find((l) => l.name === e.target.value) || LOCATIONS[0])}>
-            {LOCATIONS.map((item) => <option key={item.name}>{item.name}</option>)}
-          </select>
+          {!lockRegion && !districtName && (
+            <select className="field weather-select" value={location.name} onChange={(e) => setLocation(LOCATIONS.find((l) => l.name === e.target.value) || LOCATIONS[0])}>
+              {LOCATIONS.map((item) => <option key={item.name}>{item.name}</option>)}
+            </select>
+          )}
         </div>
         <div className="weather-list">
-          {loading && <div className="weather-meta">날씨 정보를 불러오는 중입니다.</div>}
+          {loading && <div className="weather-meta">해당 지역 날씨 정보를 불러오는 중입니다.</div>}
           {!loading && weather.length === 0 && <div className="weather-meta">현재 날씨 정보를 불러올 수 없습니다.</div>}
           {weather.slice(0, 8).map((item) => {
             const d = new Date(`${item.date}T00:00:00`);
@@ -159,12 +182,12 @@ export default function MovingCalendar() {
                   <div className="weather-meta">{weatherText(item.code)}</div>
                 </div>
                 <strong>{item.min}° / {item.max}°</strong>
-                <span className="weather-meta">비 {item.rain}%</span>
+                <span className="weather-meta">강수 {item.rain}%</span>
               </div>
             );
           })}
         </div>
-        <div className="weather-note">날씨 예보는 시간이 가까워질수록 정확도가 높아집니다. 16일 이후의 이사 예정일은 예보가 제공되는 시점에 다시 확인하도록 안내합니다.</div>
+        <div className="weather-note">{displayArea} 기준 단기 예보입니다. 이사일이 가까워질수록 기상청 등 최신 예보를 다시 확인하고, 비·눈 예보가 있으면 포장재와 차량 접근 동선을 함께 점검하세요.</div>
       </div>
     </div>
   );
