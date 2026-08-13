@@ -2,19 +2,17 @@ import type { MetadataRoute } from "next";
 import { regionProfiles } from "@/lib/regions";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
-  const now = new Date();
-  const core: MetadataRoute.Sitemap = [
-    { url: base, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${base}/estimate`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+  const base=(process.env.NEXT_PUBLIC_SITE_URL||"https://example.com").replace(/\/$/,"");
+  const now=new Date();
+  const core:MetadataRoute.Sitemap=[
+    {url:base,lastModified:now,changeFrequency:"daily",priority:1},
+    {url:`${base}/estimate`,lastModified:now,changeFrequency:"weekly",priority:.9},
+    {url:`${base}/service/packing-moving`,lastModified:now,changeFrequency:"monthly",priority:.86},
+    {url:`${base}/service/studio-moving`,lastModified:now,changeFrequency:"monthly",priority:.84},
+    {url:`${base}/service/general-moving`,lastModified:now,changeFrequency:"monthly",priority:.82},
+    {url:`${base}/service/office-moving`,lastModified:now,changeFrequency:"monthly",priority:.84},
+    {url:`${base}/privacy`,lastModified:now,changeFrequency:"yearly",priority:.25},
   ];
-  const regional: MetadataRoute.Sitemap = regionProfiles.flatMap((region) =>
-    region.districts.map((district) => ({
-      url: `${base}/moving/${region.slug}/${encodeURIComponent(district)}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.75,
-    }))
-  );
-  return [...core, ...regional];
+  const regional:MetadataRoute.Sitemap=regionProfiles.flatMap(region=>region.districts.map(district=>({url:`${base}/moving/${region.slug}/${encodeURIComponent(district)}`,lastModified:now,changeFrequency:"weekly" as const,priority:.75})));
+  return [...core,...regional];
 }
