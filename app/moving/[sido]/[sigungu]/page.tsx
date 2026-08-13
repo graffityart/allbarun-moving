@@ -4,6 +4,8 @@ import MovingCalendar from "@/components/MovingCalendar";
 import { getDistrictRegion, regionProfiles } from "@/lib/regions";
 import { getDistrictGuide } from "@/lib/district-content";
 import { getGyeonggiGuide } from "@/lib/gyeonggi-content";
+import { getIncheonGuide } from "@/lib/incheon-content";
+import { getBusanGuide } from "@/lib/busan-content";
 import { getRegionHeroImage } from "@/lib/region-assets";
 import { getRegionFaq } from "@/lib/region-faq";
 
@@ -37,7 +39,12 @@ export default async function DistrictPage({ params }: Props) {
   if (!data) notFound();
 
   const { region, district } = data;
-  const local = (region.name === "경기" ? getGyeonggiGuide(district) : undefined) ?? getDistrictGuide(region.name, district);
+  const specialGuide =
+    region.name === "경기" ? getGyeonggiGuide(district) :
+    region.name === "인천" ? getIncheonGuide(district) :
+    region.name === "부산" ? getBusanGuide(district) :
+    undefined;
+  const local = specialGuide ?? getDistrictGuide(region.name, district);
   const heroImage = getRegionHeroImage(sido, district);
   const faqs = getRegionFaq(region.name, district);
   const factors = Array.from(
