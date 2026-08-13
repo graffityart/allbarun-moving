@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import EstimateForm from "@/components/EstimateForm";
+import "./estimate.css";
 
 export const metadata: Metadata = {
   title: "이사 비교견적 신청 | 올바른이사",
-  description: "포장이사·원룸이사·일반이사·사무실이사의 지역, 일정, 작업 조건을 입력하고 비교견적을 준비하세요.",
+  description: "포장이사·원룸이사·일반이사·사무실이사의 출발지역, 도착지역, 날짜와 작업조건을 단계별로 입력하고 비교견적을 준비하세요.",
 };
 
 export default function EstimatePage() {
@@ -19,8 +20,8 @@ export default function EstimatePage() {
         <section className="sub-hero">
           <div className="wrap narrow">
             <span className="eyebrow">무료 비교견적</span>
-            <h1>이사 조건을 입력하면<br/>비교하기 쉬워집니다.</h1>
-            <p>금액만 묻기보다 이사 유형, 지역, 날짜와 작업 조건을 같이 전달하면 업체별 견적 차이를 더 정확하게 비교할 수 있습니다.</p>
+            <h1>한 번에 길게 쓰지 말고,<br/>5단계로 간단하게 입력하세요.</h1>
+            <p>이사 종류 → 출발·도착지역 → 날짜 → 현장조건 → 연락처 순서로 필요한 정보만 받습니다. 지역 페이지에서 들어오면 출발지역은 자동으로 이어집니다.</p>
           </div>
         </section>
         <section className="section">
