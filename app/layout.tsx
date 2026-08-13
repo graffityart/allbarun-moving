@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./region.css";
 import "./region-faq.css";
+import "./home.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
@@ -12,11 +13,11 @@ export const metadata: Metadata = {
     template: "%s | 올바른이사",
   },
   description:
-    "포장이사, 원룸이사, 일반이사, 사무실이사 업체를 지역별로 비교하고 무료 견적을 받아보세요. 손없는날과 이사 날짜별 날씨 정보도 함께 확인할 수 있습니다.",
+    "포장이사, 원룸이사, 일반이사, 사무실이사를 지역별 특성과 함께 비교하고 손없는날, 날씨, 전입신고, 생활요금 이전 등 실제 이사 준비 정보를 확인하세요.",
   openGraph: {
     title: "올바른이사 | 전국 이사업체 비교견적",
     description:
-      "내 지역 이사업체를 비교하고 손없는날과 날씨까지 확인해 이사 날짜를 준비하세요.",
+      "지역별 이사 조건과 손없는날·날씨, 생활정보까지 함께 확인하고 이사업체 견적을 비교하세요.",
     type: "website",
     locale: "ko_KR",
     siteName: "올바른이사",
