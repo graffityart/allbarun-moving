@@ -9,15 +9,10 @@ export default function RegionHeroImage({src,region,district}:Props){
   }
 
   if(isGangnam){
-    return <div className="gangnam-animated-hero" role="img" aria-label="서울 강남구 올바른이사 박스 적재와 트럭 출발 애니메이션">
+    return <div className="gangnam-animated-hero" role="img" aria-label="서울 강남구 올바른이사 움직이는 3D 이사 일러스트">
       <img className="gangnam-scene-base" src={resolvedSrc} alt="서울 강남구 올바른이사 3D 이사 서비스 일러스트" width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>
-      <span className="gangnam-box gangnam-box-one" aria-hidden="true"/>
-      <span className="gangnam-box gangnam-box-two" aria-hidden="true"/>
-      <span className="gangnam-load-glow" aria-hidden="true"/>
-      <span className="gangnam-truck-mask" aria-hidden="true"/>
-      <span className="gangnam-truck-layer" aria-hidden="true"/>
-      <span className="gangnam-motion-line line-one" aria-hidden="true"/>
-      <span className="gangnam-motion-line line-two" aria-hidden="true"/>
+      <span className="gangnam-light-sweep" aria-hidden="true"/>
+      <span className="gangnam-ground-shadow" aria-hidden="true"/>
     </div>;
   }
 
