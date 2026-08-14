@@ -8,6 +8,9 @@ function makeReceipt(){
 }
 
 export async function POST(request:Request){
+  if(process.env.ENABLE_INTERNAL_ESTIMATE!=="true"){
+    return NextResponse.json({ok:false,code:"INTERNAL_ESTIMATE_DISABLED",message:"현재 자체 견적 접수는 사용하지 않습니다. 외부 비교견적 페이지를 이용해주세요."},{status:503});
+  }
   try{
     const body=await request.json();
     const phone=String(body.phone||"").replace(/\s/g,"");
