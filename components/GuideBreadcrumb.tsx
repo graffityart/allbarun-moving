@@ -1,0 +1,3 @@
+type Props={title:string;path:string};
+const SITE_URL=(process.env.NEXT_PUBLIC_SITE_URL||"https://olbarun.kr").replace(/\/$/,"");
+export default function GuideBreadcrumb({title,path}:Props){const pageUrl=`${SITE_URL}${path}`;const schema={"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"홈",item:SITE_URL},{"@type":"ListItem",position:2,name:"이사 준비 가이드",item:`${SITE_URL}/guide`},{"@type":"ListItem",position:3,name:title,item:pageUrl}]};return <><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><div className="breadcrumb"><a href="/">홈</a><span>›</span><a href="/guide">이사 준비 가이드</a><span>›</span><strong>{title}</strong></div></>}
