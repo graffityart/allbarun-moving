@@ -1,5 +1,6 @@
 import type { LocalGuide } from "@/lib/district-content";
 import { getRegionalOverrideExtra } from "@/lib/regional-overrides-extra";
+import { getRegionalOverrideThird } from "@/lib/regional-overrides-third";
 
 const overrides: Record<string, Record<string, LocalGuide>> = {
   "강원": {
@@ -45,5 +46,5 @@ const overrides: Record<string, Record<string, LocalGuide>> = {
 };
 
 export function getRegionalOverride(region:string,district:string):LocalGuide|undefined{
-  return overrides[region]?.[district] ?? getRegionalOverrideExtra(region,district);
+  return overrides[region]?.[district] ?? getRegionalOverrideExtra(region,district) ?? getRegionalOverrideThird(region,district);
 }
