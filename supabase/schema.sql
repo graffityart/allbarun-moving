@@ -27,5 +27,20 @@ create index if not exists moving_estimates_status_idx on public.moving_estimate
 create index if not exists moving_estimates_moving_date_idx on public.moving_estimates(moving_date);
 
 alter table public.moving_estimates enable row level security;
--- 브라우저에서 이 테이블을 직접 읽거나 쓰지 않습니다.
--- 모든 고객 접수와 관리자 조회는 Vercel 서버 API + SUPABASE_SERVICE_ROLE_KEY를 통해 처리합니다.
+-- 브라우저에서 이 테이블을 직접 읽거나 쓰는 공개 정책은 만들지 않습니다.
+-- 고객 접수와 관리자 조회는 Vercel 서버 API + SUPABASE_SERVICE_ROLE_KEY를 통해 처리합니다.
+
+create or replace function public.set_moving_estimates_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists moving_estimates_updated_at on public.moving_estimates;
+create trigger moving_estimates_updated_at
+before update on public.moving_estimates
+for each row execute function public.set_moving_estimates_updated_at();
