@@ -1,0 +1,2 @@
+type Props={src:string;region:string;district:string};
+export default function RegionHeroImage({src,region,district}:Props){if(!src)return <div className="region-image-placeholder" role="img" aria-label={`${district} 대표 이미지 준비중`}><strong>{district} 대표 이미지 영역</strong><span>지역별 이미지를 등록하면 이 위치에 표시됩니다.</span></div>;return <img src={src} alt={`${region} ${district} 이사 지역 전경`} width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>}
