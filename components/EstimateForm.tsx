@@ -21,6 +21,8 @@ export default function EstimateForm() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<EstimateRequest>(initialEstimateRequest);
   const [submitted, setSubmitted] = useState(false);
+  const [receiptNo, setReceiptNo] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -69,12 +71,29 @@ export default function EstimateForm() {
     setStep((current) => Math.min(5, current + 1));
   }
 
-  function submitEstimate() {
+  async function submitEstimate() {
     const message = validateCurrentStep();
     if (message) return setError(message);
-    const payload = { ...data, source: "website" as const, pagePath: window.location.pathname + window.location.search, submittedAt: new Date().toISOString() };
-    console.info("estimate-request-ready", payload);
-    setSubmitted(true);
+    setSubmitting(true);
+    setError("");
+    try {
+      const response = await fetch("/api/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, pagePath: window.location.pathname + window.location.search }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (result.code === "DB_NOT_CONFIGURED") throw new Error("현재 온라인 접수 저장 기능을 준비 중입니다. 잠시 후 다시 이용해주세요.");
+        throw new Error(result.message || "접수 중 오류가 발생했습니다.");
+      }
+      setReceiptNo(result.receiptNo || "");
+      setSubmitted(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "접수 중 오류가 발생했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function toggleOption(item: string) {
@@ -82,7 +101,7 @@ export default function EstimateForm() {
   }
 
   if (submitted) {
-    return <div className="estimate-complete"><div className="complete-icon">✓</div><span className="mini-label">입력 완료</span><h2>비교견적 정보를 확인했습니다.</h2><p>현재는 실제 업체 전송 전 단계입니다. 다음 개발 단계에서 이 입력값을 DB에 저장하고 관리자에게 접수 알림이 가도록 연결할 수 있습니다.</p><div className="estimate-summary compact"><div><span>이사 종류</span><strong>{data.movingType}</strong></div><div><span>출발</span><strong>{selectedOrigin?.name} {data.originDistrict}</strong></div><div><span>도착</span><strong>{selectedDestination?.name} {data.destinationDistrict}</strong></div><div><span>이사일</span><strong>{data.movingDate}</strong></div></div><button className="secondary-action" onClick={() => { setSubmitted(false); setStep(1); }}>내용 다시 확인하기</button></div>;
+    return <div className="estimate-complete"><div className="complete-icon">✓</div><span className="mini-label">접수 완료</span><h2>비교견적 신청이 접수되었습니다.</h2>{receiptNo && <p><strong>접수번호 {receiptNo}</strong></p>}<p>입력하신 내용을 기준으로 견적 안내를 준비합니다. 최종 작업범위와 추가비 기준은 업체 상담 시 다시 확인해주세요.</p><div className="estimate-summary compact"><div><span>이사 종류</span><strong>{data.movingType}</strong></div><div><span>출발</span><strong>{selectedOrigin?.name} {data.originDistrict}</strong></div><div><span>도착</span><strong>{selectedDestination?.name} {data.destinationDistrict}</strong></div><div><span>이사일</span><strong>{data.movingDate}</strong></div></div></div>;
   }
 
   return <div className="estimate-flow"><div className="estimate-progress" aria-label={`견적 신청 ${step}단계`}><div className="progress-head"><strong>{step} / 5 단계</strong><span>{stepLabels[step - 1]}</span></div><div className="progress-track"><span style={{ width: `${step * 20}%` }} /></div><div className="progress-labels">{stepLabels.map((label, index) => <button key={label} type="button" className={index + 1 === step ? "active" : index + 1 < step ? "done" : ""} onClick={() => index + 1 < step && setStep(index + 1)}>{index + 1}. {label}</button>)}</div></div><div className="estimate-step-card">
@@ -91,5 +110,5 @@ export default function EstimateForm() {
     {step === 3 && <><div className="step-heading"><span className="form-step">03</span><div><h2>이사 예정일을 알려주세요.</h2><p>주말·월말·손없는날처럼 예약이 몰리는 시기에는 여러 날짜를 함께 비교하는 것도 좋습니다.</p></div></div><div className="date-focus"><label><span>이사 예정일</span><input className="field" type="date" value={data.movingDate} min={new Date().toISOString().slice(0,10)} onChange={(e) => setField("movingDate", e.target.value)} /></label><div className="date-tip"><strong>날짜 선택 팁</strong><p>{data.movingDate ? `${data.movingDate} 날짜가 미리 선택되어 있습니다. ` : ""}날씨는 이사일이 가까워졌을 때 다시 확인하세요. 지역 페이지에서는 손없는날과 단기예보를 함께 볼 수 있습니다.</p>{data.originSido && data.originDistrict && <a href={`/moving/${data.originSido}/${encodeURIComponent(data.originDistrict)}#local-calendar`}>출발지역 손없는날·날씨 보기 →</a>}</div></div></>}
     {step === 4 && <><div className="step-heading"><span className="form-step">04</span><div><h2>현장 작업 조건을 알려주세요.</h2><p>정확히 몰라도 괜찮습니다. 지금 알고 있는 항목만 선택하고 추가사항은 메모에 적어주세요.</p></div></div><div className="estimate-options">{optionItems.map((item) => <button type="button" key={item} className={data.options.includes(item) ? "selected" : ""} onClick={() => toggleOption(item)}><span>{data.options.includes(item) ? "✓" : "+"}</span>{item}</button>)}</div><label className="memo-field"><span>추가로 알려줄 내용</span><textarea value={data.memo} onChange={(e) => setField("memo", e.target.value)} placeholder="예: 출발지 4층 엘리베이터 없음, 냉장고 2대, 붙박이장 분해 필요" /></label></>}
     {step === 5 && <><div className="step-heading"><span className="form-step">05</span><div><h2>견적 안내를 받을 정보를 입력하세요.</h2><p>필요한 최소 정보만 입력받도록 구성했습니다.</p></div></div><div className="field-grid contact-fields"><input className="field" value={data.name} onChange={(e) => setField("name", e.target.value)} placeholder="이름" /><input className="field" type="tel" value={data.phone} onChange={(e) => setField("phone", e.target.value)} placeholder="휴대폰 번호 예: 010-1234-5678" /></div><label className="agree-line"><input type="checkbox" checked={data.privacyAgreed} onChange={(e) => setField("privacyAgreed", e.target.checked)} /> 개인정보 수집 및 비교견적 안내에 동의합니다.</label><div className="estimate-summary"><div><span>이사 종류</span><strong>{data.movingType || "미선택"}</strong></div><div><span>이동</span><strong>{selectedOrigin?.name} {data.originDistrict} → {selectedDestination?.name} {data.destinationDistrict}</strong></div><div><span>날짜</span><strong>{data.movingDate || "미선택"}</strong></div><div><span>현장 조건</span><strong>{data.options.length ? `${data.options.length}개 선택` : "선택 없음"}</strong></div></div></>}
-    {error && <div className="estimate-error" role="alert">{error}</div>}<div className="estimate-actions">{step > 1 && <button className="secondary-action" type="button" onClick={() => { setStep(step - 1); setError(""); }}>이전</button>}{step < 5 ? <button className="primary-action" type="button" onClick={nextStep}>다음 단계</button> : <button className="primary-action" type="button" onClick={submitEstimate}>무료 비교견적 신청하기</button>}</div></div></div>;
+    {error && <div className="estimate-error" role="alert">{error}</div>}<div className="estimate-actions">{step > 1 && <button className="secondary-action" type="button" disabled={submitting} onClick={() => { setStep(step - 1); setError(""); }}>이전</button>}{step < 5 ? <button className="primary-action" type="button" onClick={nextStep}>다음 단계</button> : <button className="primary-action" type="button" disabled={submitting} onClick={submitEstimate}>{submitting ? "접수 중..." : "무료 비교견적 신청하기"}</button>}</div></div></div>;
 }
