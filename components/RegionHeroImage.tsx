@@ -14,8 +14,9 @@ export default function RegionHeroImage({src,region,district}:Props){
   }
 
   if(isGangnam){
-    return <div className="gangnam-video-hero" aria-label="서울 강남구 이사 3D 애니메이션">
-      {!videoFailed?<video
+    return <div className={`gangnam-video-hero${videoFailed?" video-failed":""}`} aria-label="서울 강남구 이사 3D 애니메이션">
+      <img className="gangnam-video-fallback" src={resolvedSrc} alt="서울 강남구 올바른이사 3D 이사 서비스 일러스트" width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>
+      {!videoFailed&&<video
         className="gangnam-hero-video"
         autoPlay
         muted
@@ -27,7 +28,7 @@ export default function RegionHeroImage({src,region,district}:Props){
         onError={()=>setVideoFailed(true)}
       >
         <source src="/videos/gangnam-moving.mp4" type="video/mp4"/>
-      </video>:<img className="gangnam-video-fallback" src={resolvedSrc} alt="서울 강남구 올바른이사 3D 이사 서비스 일러스트" width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>}
+      </video>}
     </div>;
   }
 
