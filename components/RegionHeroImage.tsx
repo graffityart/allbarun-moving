@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
+
 type Props={src:string;region:string;district:string};
 
 export default function RegionHeroImage({src,region,district}:Props){
+  const [videoFailed,setVideoFailed]=useState(false);
   const isGangnam=region==="서울"&&district==="강남구";
   const resolvedSrc=isGangnam?"/images/regions/gangnam-moving.webp":src;
 
@@ -9,10 +14,20 @@ export default function RegionHeroImage({src,region,district}:Props){
   }
 
   if(isGangnam){
-    return <div className="gangnam-animated-hero" role="img" aria-label="서울 강남구 올바른이사 움직이는 3D 이사 일러스트">
-      <img className="gangnam-scene-base" src={resolvedSrc} alt="서울 강남구 올바른이사 3D 이사 서비스 일러스트" width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>
-      <span className="gangnam-light-sweep" aria-hidden="true"/>
-      <span className="gangnam-ground-shadow" aria-hidden="true"/>
+    return <div className="gangnam-video-hero" aria-label="서울 강남구 이사 3D 애니메이션">
+      {!videoFailed?<video
+        className="gangnam-hero-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={resolvedSrc}
+        aria-label="강남구 이사업체 직원이 박스를 옮기고 트럭이 이동하는 3D 애니메이션"
+        onError={()=>setVideoFailed(true)}
+      >
+        <source src="/videos/gangnam-moving.mp4" type="video/mp4"/>
+      </video>:<img className="gangnam-video-fallback" src={resolvedSrc} alt="서울 강남구 올바른이사 3D 이사 서비스 일러스트" width="720" height="480" loading="eager" fetchPriority="high" decoding="async"/>}
     </div>;
   }
 
