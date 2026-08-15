@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "check:site": "node scripts/check-site-structure.mjs"
+    "check:site": "node scripts/check-site-structure.mjs",
+    "media:list": "node scripts/generate-region-media-list.mjs"
   },
   "dependencies": {
     "korean-lunar-calendar": "^0.4.0",
