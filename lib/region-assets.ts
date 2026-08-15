@@ -2,10 +2,10 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 
-// 권장 지역 상세 페이지 미디어 구조
-// 이미지: public/images/regions/{sido}/{districtSlug}/hero.webp
-// 영상:   public/images/regions/{sido}/{districtSlug}/hero.mp4
-// 기존 평면 파일명도 하위 호환으로 계속 지원합니다.
+// 지역 상세 페이지 미디어 파일명 규칙
+// 이미지: public/images/regions/{sido}/{district}/hero.webp
+// 영상:   public/images/regions/{sido}/{district}/hero.mp4
+// 앞으로 main 브랜치의 위 폴더 구조만 사용합니다.
 
 const CHOSEONG=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
 const JUNGSEONG=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
@@ -34,36 +34,17 @@ const districtSlugOverrides:Record<string,string>={
 };
 
 export function getDistrictAssetSlug(district:string){return districtSlugOverrides[district]||romanizeHangul(district).replace(/(si|gun|gu)$/,'')}
-export function getRegionHeroFilename(sido:string,district:string){return `${sido}-${getDistrictAssetSlug(district)}-moving.webp`}
-export function getRegionVideoFilename(sido:string,district:string){return `${sido}-${getDistrictAssetSlug(district)}-moving.mp4`}
 
-function publicFileExists(relativePath:string){
-  return fs.existsSync(path.join(process.cwd(),"public",relativePath.replace(/^\//,"")));
-}
+function publicFileExists(relativePath:string){return fs.existsSync(path.join(process.cwd(),"public",relativePath.replace(/^\//,"")))}
 
 export function getRegionHeroImage(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const folderWebp=`/images/regions/${sido}/${slug}/hero.webp`;
-  if(publicFileExists(folderWebp))return folderWebp;
-
-  const folderPng=`/images/regions/${sido}/${slug}/hero.png`;
-  if(publicFileExists(folderPng))return folderPng;
-
-  const legacyFlat=`/images/regions/${getRegionHeroFilename(sido,district)}`;
-  if(publicFileExists(legacyFlat))return legacyFlat;
-
-  if(sido==="seoul"&&district==="강남구"&&publicFileExists("/images/regions/gangnam-moving.webp"))return "/images/regions/gangnam-moving.webp";
-  return "";
+  const standard=`/images/regions/${sido}/${slug}/hero.webp`;
+  return publicFileExists(standard)?standard:"";
 }
 
 export function getRegionHeroVideo(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const folderVideo=`/images/regions/${sido}/${slug}/hero.mp4`;
-  if(publicFileExists(folderVideo))return folderVideo;
-
-  const legacyFlat=`/videos/${getRegionVideoFilename(sido,district)}`;
-  if(publicFileExists(legacyFlat))return legacyFlat;
-
-  if(sido==="seoul"&&district==="강남구"&&publicFileExists("/videos/gangnam-moving.mp4"))return "/videos/gangnam-moving.mp4";
-  return "";
+  const standard=`/images/regions/${sido}/${slug}/hero.mp4`;
+  return publicFileExists(standard)?standard:"";
 }
