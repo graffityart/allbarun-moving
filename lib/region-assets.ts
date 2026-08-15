@@ -3,9 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 // 지역 상세 페이지 미디어 파일명 규칙
-// 이미지: public/images/regions/{sido}/{district}/hero.webp
-// 영상:   public/images/regions/{sido}/{district}/hero.mp4
-// 앞으로 main 브랜치의 위 폴더 구조만 사용합니다.
+// 이미지: public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.webp
+// 영상:   public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.mp4
+// 예: public/images/regions/seoul/mapo/mapo-hero.webp
+// 앞으로 main 브랜치에서 위 규칙을 사용합니다.
 
 const CHOSEONG=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
 const JUNGSEONG=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
@@ -39,12 +40,12 @@ function publicFileExists(relativePath:string){return fs.existsSync(path.join(pr
 
 export function getRegionHeroImage(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const standard=`/images/regions/${sido}/${slug}/hero.webp`;
+  const standard=`/images/regions/${sido}/${slug}/${slug}-hero.webp`;
   return publicFileExists(standard)?standard:"";
 }
 
 export function getRegionHeroVideo(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const standard=`/images/regions/${sido}/${slug}/hero.mp4`;
+  const standard=`/images/regions/${sido}/${slug}/${slug}-hero.mp4`;
   return publicFileExists(standard)?standard:"";
 }
