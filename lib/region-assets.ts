@@ -31,7 +31,9 @@ function romanizeHangul(value:string){
 const districtSlugOverrides:Record<string,string>={
   "강남구":"gangnam","강동구":"gangdong","강북구":"gangbuk","강서구":"gangseo","관악구":"gwanak","광진구":"gwangjin","구로구":"guro","금천구":"geumcheon","노원구":"nowon","도봉구":"dobong","동대문구":"dongdaemun","동작구":"dongjak","마포구":"mapo","서대문구":"seodaemun","서초구":"seocho","성동구":"seongdong","성북구":"seongbuk","송파구":"songpa","양천구":"yangcheon","영등포구":"yeongdeungpo","용산구":"yongsan","은평구":"eunpyeong","종로구":"jongno","중구":"junggu","중랑구":"jungnang",
   "수원시":"suwon","성남시":"seongnam","고양시":"goyang","용인시":"yongin","부천시":"bucheon","안산시":"ansan","안양시":"anyang","남양주시":"namyangju","화성시":"hwaseong","평택시":"pyeongtaek","의정부시":"uijeongbu","시흥시":"siheung","파주시":"paju","김포시":"gimpo","광명시":"gwangmyeong","광주시":"gwangju","군포시":"gunpo","이천시":"icheon","양주시":"yangju","오산시":"osan","구리시":"guri","안성시":"anseong","포천시":"pocheon","의왕시":"uiwang","하남시":"hanam","여주시":"yeoju","동두천시":"dongducheon","과천시":"gwacheon","가평군":"gapyeong","양평군":"yangpyeong","연천군":"yeoncheon",
-  "해운대구":"haeundae","제주시":"jeju","서귀포시":"seogwipo","세종시":"sejong"
+  "해운대구":"haeundae","제주시":"jeju","서귀포시":"seogwipo","세종시":"sejong",
+  // 대구 지역 이미지 폴더/파일명 고정
+  "동구":"donggu","서구":"seogu","남구":"namgu","북구":"bukgu","수성구":"suseong","달서구":"dalseo","달성군":"dalseong","군위군":"gunwi"
 };
 
 export function getDistrictAssetSlug(district:string){return districtSlugOverrides[district]||romanizeHangul(district).replace(/(si|gun|gu)$/,'')}
