@@ -4,7 +4,7 @@ import path from "node:path";
 
 // 지역 상세 페이지 미디어 파일명 규칙
 // 기본 이미지: public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.webp
-// 전남/경남 이미지: public/images/regions/{sido}/{districtSlug}-hero.webp
+// 전남/경남/제주 이미지: public/images/regions/{sido}/{districtSlug}-hero.webp
 // 영상:       public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.mp4
 
 const CHOSEONG=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
@@ -33,7 +33,6 @@ const districtSlugOverrides:Record<string,string>={
   "해운대구":"haeundae","제주시":"jeju","서귀포시":"seogwipo","세종시":"sejong",
   "동구":"donggu","서구":"seogu","남구":"namgu","북구":"bukgu","수성구":"suseong","달서구":"dalseo","달성군":"dalseong","군위군":"gunwi",
   "목포시":"mokpo","여수시":"yeosu","순천시":"suncheon","나주시":"naju","광양시":"gwangyang","담양군":"damyang","곡성군":"gokseong","구례군":"gurye","고흥군":"goheung","보성군":"boseong","화순군":"hwasun","장흥군":"jangheung","강진군":"gangjin","해남군":"haenam","영암군":"yeongam","무안군":"muan","함평군":"hampyeong","영광군":"yeonggwang","장성군":"jangseong","완도군":"wando","진도군":"jindo","신안군":"sinan",
-  // 경남 18개 지역 이미지 파일명 고정
   "창원시":"changwon","진주시":"jinju","통영시":"tongyeong","사천시":"sacheon","김해시":"gimhae","밀양시":"miryang","거제시":"geoje","양산시":"yangsan","의령군":"uiryeong","함안군":"haman","창녕군":"changnyeong","고성군":"goseong","남해군":"namhae","하동군":"hadong","산청군":"sancheong","함양군":"hamyang","거창군":"geochang","합천군":"hapcheon"
 };
 
@@ -43,7 +42,7 @@ function publicFileExists(relativePath:string){return fs.existsSync(path.join(pr
 
 export function getRegionHeroImage(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const flatHeroRegions=new Set(["jeonnam","gyeongnam"]);
+  const flatHeroRegions=new Set(["jeonnam","gyeongnam","jeju"]);
   const standard=flatHeroRegions.has(sido)
     ?`/images/regions/${sido}/${slug}-hero.webp`
     :`/images/regions/${sido}/${slug}/${slug}-hero.webp`;
