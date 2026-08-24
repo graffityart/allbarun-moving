@@ -3,10 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 // 지역 상세 페이지 미디어 파일명 규칙
-// 이미지: public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.webp
-// 영상:   public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.mp4
+// 기본 이미지: public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.webp
+// 전남 이미지: public/images/regions/jeonnam/{districtSlug}-hero.webp
+// 영상:       public/images/regions/{sido}/{districtSlug}/{districtSlug}-hero.mp4
 // 예: public/images/regions/seoul/mapo/mapo-hero.webp
-// 앞으로 main 브랜치에서 위 규칙을 사용합니다.
+// 예: public/images/regions/jeonnam/mokpo-hero.webp
 
 const CHOSEONG=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
 const JUNGSEONG=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
@@ -33,7 +34,13 @@ const districtSlugOverrides:Record<string,string>={
   "수원시":"suwon","성남시":"seongnam","고양시":"goyang","용인시":"yongin","부천시":"bucheon","안산시":"ansan","안양시":"anyang","남양주시":"namyangju","화성시":"hwaseong","평택시":"pyeongtaek","의정부시":"uijeongbu","시흥시":"siheung","파주시":"paju","김포시":"gimpo","광명시":"gwangmyeong","광주시":"gwangju","군포시":"gunpo","이천시":"icheon","양주시":"yangju","오산시":"osan","구리시":"guri","안성시":"anseong","포천시":"pocheon","의왕시":"uiwang","하남시":"hanam","여주시":"yeoju","동두천시":"dongducheon","과천시":"gwacheon","가평군":"gapyeong","양평군":"yangpyeong","연천군":"yeoncheon",
   "해운대구":"haeundae","제주시":"jeju","서귀포시":"seogwipo","세종시":"sejong",
   // 대구 지역 이미지 폴더/파일명 고정
-  "동구":"donggu","서구":"seogu","남구":"namgu","북구":"bukgu","수성구":"suseong","달서구":"dalseo","달성군":"dalseong","군위군":"gunwi"
+  "동구":"donggu","서구":"seogu","남구":"namgu","북구":"bukgu","수성구":"suseong","달서구":"dalseo","달성군":"dalseong","군위군":"gunwi",
+  // 전남 22개 지역 이미지 파일명 고정
+  "목포시":"mokpo","여수시":"yeosu","순천시":"suncheon","나주시":"naju","광양시":"gwangyang",
+  "담양군":"damyang","곡성군":"gokseong","구례군":"gurye","고흥군":"goheung","보성군":"boseong",
+  "화순군":"hwasun","장흥군":"jangheung","강진군":"gangjin","해남군":"haenam","영암군":"yeongam",
+  "무안군":"muan","함평군":"hampyeong","영광군":"yeonggwang","장성군":"jangseong","완도군":"wando",
+  "진도군":"jindo","신안군":"sinan"
 };
 
 export function getDistrictAssetSlug(district:string){return districtSlugOverrides[district]||romanizeHangul(district).replace(/(si|gun|gu)$/,'')}
@@ -42,7 +49,9 @@ function publicFileExists(relativePath:string){return fs.existsSync(path.join(pr
 
 export function getRegionHeroImage(sido:string,district:string){
   const slug=getDistrictAssetSlug(district);
-  const standard=`/images/regions/${sido}/${slug}/${slug}-hero.webp`;
+  const standard=sido==="jeonnam"
+    ?`/images/regions/jeonnam/${slug}-hero.webp`
+    :`/images/regions/${sido}/${slug}/${slug}-hero.webp`;
   return publicFileExists(standard)?standard:"";
 }
 
