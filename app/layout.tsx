@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./footer.css";
 import "./region.css";
 import "./region-faq.css";
 import "./home.css";
