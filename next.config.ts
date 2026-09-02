@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
   async headers(){
     return [{source:"/(.*)",headers:securityHeaders}];
   },
+  async redirects(){
+    return [
+      {source:"/:path*",has:[{type:"host",value:"olbarun.kr"}],destination:"https://5km.kr/:path*",permanent:true},
+      {source:"/:path*",has:[{type:"host",value:"www.olbarun.kr"}],destination:"https://5km.kr/:path*",permanent:true},
+    ];
+  },
 };
 
 export default nextConfig;
