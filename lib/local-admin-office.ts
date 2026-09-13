@@ -1,4 +1,5 @@
 import { jeonbukAdminOffices } from "@/lib/local-admin-office-jeonbuk";
+import { jeonnamAdminOffices } from "@/lib/local-admin-office-jeonnam";
 
 export type LocalAdminOffice = {
   officeName: string;
@@ -54,6 +55,7 @@ const overrides: Record<string, LocalAdminOffice> = {
     note: "의령군 안에서도 실제 전입 주소가 다른 면이면 해당 면사무소를 이용해야 합니다.",
   },
   ...jeonbukAdminOffices,
+  ...jeonnamAdminOffices,
 };
 
 export function getLocalAdminOffice(regionName: string, district: string): LocalAdminOffice {
