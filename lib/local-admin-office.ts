@@ -1,3 +1,5 @@
+import { jeonbukAdminOffices } from "@/lib/local-admin-office-jeonbuk";
+
 export type LocalAdminOffice = {
   officeName: string;
   address: string;
@@ -51,6 +53,7 @@ const overrides: Record<string, LocalAdminOffice> = {
     homepageLabel: "의령군 공식 의령읍사무소 안내",
     note: "의령군 안에서도 실제 전입 주소가 다른 면이면 해당 면사무소를 이용해야 합니다.",
   },
+  ...jeonbukAdminOffices,
 };
 
 export function getLocalAdminOffice(regionName: string, district: string): LocalAdminOffice {
