@@ -1,10 +1,10 @@
 import { regionProfiles } from "@/lib/regions";
 
 const titlePatterns=[
-(r:string,d:string)=>`${d} 포장이사·이사업체 비교 | ${r} 지역 이사 정보`,
-(r:string,d:string)=>`${r} ${d} 이사 준비 | 견적·손없는날·날씨`,
-(r:string,d:string)=>`${d} 이사 견적 비교 | 지역특징·포장이사 체크`,
-(r:string,d:string)=>`${d} 이사업체 찾기 | 이사비용·생활정보`
+(r:string,d:string)=>`${d} 포장이사 | ${r} 이사업체·이사견적 비교`,
+(r:string,d:string)=>`${d} 이사업체 | ${r} 포장이사·이사비용 정보`,
+(r:string,d:string)=>`${d} 포장이사·이사업체 | ${r} 지역 이사 정보`,
+(r:string,d:string)=>`${d} 이사견적 비교 | ${r} 포장이사 체크사항`
 ];
 
 function hash(s:string){return[...s].reduce((a,c)=>a+c.charCodeAt(0),0)}
@@ -13,11 +13,11 @@ export function getRegionalMeta(region:string,district:string){
  const seed=hash(region+district);
  const i=seed%titlePatterns.length;
  const title=titlePatterns[i](region,district);
- const openings=[`${region} ${district} 이사를 준비한다면`,`${district}에서 이사업체를 비교할 때는`,`${region} ${district}의 이사 조건은`,`${district} 포장이사를 알아보기 전`];
- const middles=[`주거 형태와 차량 접근, 주차거리부터 확인하는 것이 좋습니다.`,`아파트·오피스텔·주택 등 건물 형태와 작업 동선을 함께 살펴보세요.`,`짐의 양뿐 아니라 엘리베이터와 도로·주차 환경이 작업시간에 영향을 줄 수 있습니다.`,`출발지와 도착지의 층수, 차량 정차 위치와 생활권 특성을 함께 확인하세요.`];
- const endings=[`지역별 체크포인트와 손없는날·날씨, 전입신고와 생활서비스 이전 정보를 정리했습니다.`,`견적 비교 기준부터 날짜 선택, 이사 전후 생활정보까지 실제 준비 순서에 맞춰 확인할 수 있습니다.`,`포장이사 비교 항목과 이사 날짜, 행정·생활요금 이전까지 한 페이지에서 확인하세요.`,`현장조건과 날짜별 준비사항, 이사 후 필요한 생활정보를 함께 안내합니다.`];
+ const openings=[`${region} ${district} 포장이사·이사업체를 알아본다면`,`${district} 이사업체와 포장이사 견적을 비교할 때는`,`${region} ${district} 이사를 준비한다면`,`${district} 포장이사를 알아보기 전`];
+ const middles=[`주거 형태와 차량 접근, 주차거리부터 확인하는 것이 좋습니다.`,`아파트·오피스텔·주택 등 건물 형태와 작업 동선을 함께 살펴보세요.`,`짐의 양뿐 아니라 엘리베이터와 도로·주차 환경이 작업시간과 견적에 영향을 줄 수 있습니다.`,`출발지와 도착지의 층수, 차량 정차 위치와 생활권 특성을 함께 확인하세요.`];
+ const endings=[`지역별 체크포인트와 손없는날·날씨, 이사 준비 정보를 정리했습니다.`,`견적 비교 기준부터 날짜 선택, 이사 전후 생활정보까지 실제 준비 순서에 맞춰 확인할 수 있습니다.`,`포장이사 비교 항목과 이사 날짜, 행정·생활요금 이전까지 한 페이지에서 확인하세요.`,`현장조건과 날짜별 준비사항, 이사 후 필요한 생활정보를 함께 안내합니다.`];
  const description=`${openings[seed%openings.length]} ${middles[Math.floor(seed/3)%middles.length]} ${endings[Math.floor(seed/7)%endings.length]}`;
- return{title,description};
+ return{title,description,robots:{index:true,follow:true}};
 }
 
 export function getRegionalHeroDescription(region:string,district:string){
