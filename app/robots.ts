@@ -1,2 +1,14 @@
 import type { MetadataRoute } from "next";
-export default function robots():MetadataRoute.Robots{const base=(process.env.NEXT_PUBLIC_SITE_URL||"https://5km.kr").replace(/\/$/,"");return{rules:[{userAgent:"*",allow:"/",disallow:["/admin/","/api/"]}],sitemap:`${base}/sitemap.xml`,host:base}}
+
+export default function robots(): MetadataRoute.Robots {
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://5km.kr").replace(/\/$/, "");
+
+  return {
+    rules: [
+      { userAgent: "Yeti", allow: "/", disallow: ["/admin/", "/api/"] },
+      { userAgent: "*", allow: "/", disallow: ["/admin/", "/api/"] },
+    ],
+    sitemap: `${base}/sitemap.xml`,
+    host: base,
+  };
+}
