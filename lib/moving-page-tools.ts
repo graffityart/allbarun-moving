@@ -1,22 +1,91 @@
 import { regionProfiles } from "@/lib/regions";
 
 const titlePatterns=[
-(r:string,d:string)=>`${d} 포장이사 | ${r} 이사업체·이사견적 비교`,
-(r:string,d:string)=>`${d} 이사업체 | ${r} 포장이사·이사비용 정보`,
-(r:string,d:string)=>`${d} 포장이사·이사업체 | ${r} 지역 이사 정보`,
-(r:string,d:string)=>`${d} 이사견적 비교 | ${r} 포장이사 체크사항`
+(r:string,d:string)=>`${d} 포장이사 | ${r} 이사업체·견적 비교`,
+(r:string,d:string)=>`${d} 이사업체 | ${r} 포장이사 비용·체크`,
+(r:string,d:string)=>`${d} 이사견적 | ${r} 포장이사 지역정보`,
+(r:string,d:string)=>`${r} ${d} 포장이사 | 이사업체 비교 가이드`,
+(r:string,d:string)=>`${d} 이사 준비 | ${r} 포장이사·이사업체`,
+(r:string,d:string)=>`${d} 포장이사 비용 | ${r} 이사견적 비교`,
+(r:string,d:string)=>`${d} 이사업체 비교 | ${r} 이사 조건·견적`,
+(r:string,d:string)=>`${r} ${d} 이사업체 | 포장이사 현장조건`,
+(r:string,d:string)=>`${d} 포장이사 견적 | ${r} 지역 이사 체크`,
+(r:string,d:string)=>`${d} 이사비용·업체 | ${r} 포장이사 정보`,
+(r:string,d:string)=>`${r} ${d} 이사견적 | 포장이사 준비사항`,
+(r:string,d:string)=>`${d} 이사 지역정보 | ${r} 포장이사·견적`
 ];
 
 function hash(s:string){return[...s].reduce((a,c)=>a+c.charCodeAt(0),0)}
 
+function districtKind(district:string){
+ if(district.endsWith("군"))return "읍·면과 외곽 생활권";
+ if(district.endsWith("구"))return "도심 주거·상업 생활권";
+ if(district.endsWith("시"))return "도심·신도시·외곽 생활권";
+ return "지역 생활권";
+}
+
+const regionAngles:Record<string,string>={
+ "서울":"대단지·오피스텔·구도심이 혼재한 수도권 중심지",
+ "경기":"신도시와 구도심, 장거리 이동이 함께 나타나는 광역 생활권",
+ "인천":"신도시·구도심·도서권의 이동조건 차이가 큰 지역",
+ "부산":"경사지·해안·구도심의 차량 접근 차이가 큰 도시",
+ "대구":"대단지 공동주택과 구도심 저층주거가 함께 있는 지역",
+ "대전":"신도시형 공동주택과 원도심 주거지가 공존하는 도시",
+ "광주":"택지지구 아파트와 구도심 주택가가 나뉘는 지역",
+ "울산":"산업단지 통근축과 도심 주거권의 시간대 차이가 큰 지역",
+ "세종":"신축 공동주택과 단지별 관리규정 확인이 중요한 계획도시",
+ "강원":"산간도로·기상·도시간 이동거리를 함께 봐야 하는 지역",
+ "충북":"도시권과 읍면·농촌권의 접근성 차이가 큰 내륙지역",
+ "충남":"산업도시·서해안·농촌생활권이 함께 있는 지역",
+ "전북":"도심권과 농촌·외곽권의 이동조건 차이가 있는 지역",
+ "전남":"해안·도서·산업도시와 농촌생활권이 함께 있는 지역",
+ "경북":"도시간 이동거리와 산업·농촌권 차이가 큰 광역지역",
+ "경남":"산업도시·해안·신도시와 외곽권이 넓게 분포한 지역",
+ "제주":"도심·관광지·읍면권의 거리와 기상 영향을 함께 보는 지역"
+};
+
 export function getRegionalMeta(region:string,district:string){
- const seed=hash(region+district);
- const i=seed%titlePatterns.length;
- const title=titlePatterns[i](region,district);
- const openings=[`${region} ${district} 포장이사·이사업체를 알아본다면`,`${district} 이사업체와 포장이사 견적을 비교할 때는`,`${region} ${district} 이사를 준비한다면`,`${district} 포장이사를 알아보기 전`];
- const middles=[`주거 형태와 차량 접근, 주차거리부터 확인하는 것이 좋습니다.`,`아파트·오피스텔·주택 등 건물 형태와 작업 동선을 함께 살펴보세요.`,`짐의 양뿐 아니라 엘리베이터와 도로·주차 환경이 작업시간과 견적에 영향을 줄 수 있습니다.`,`출발지와 도착지의 층수, 차량 정차 위치와 생활권 특성을 함께 확인하세요.`];
- const endings=[`지역별 체크포인트와 손없는날·날씨, 이사 준비 정보를 정리했습니다.`,`견적 비교 기준부터 날짜 선택, 이사 전후 생활정보까지 실제 준비 순서에 맞춰 확인할 수 있습니다.`,`포장이사 비교 항목과 이사 날짜, 행정·생활요금 이전까지 한 페이지에서 확인하세요.`,`현장조건과 날짜별 준비사항, 이사 후 필요한 생활정보를 함께 안내합니다.`];
- const description=`${openings[seed%openings.length]} ${middles[Math.floor(seed/3)%middles.length]} ${endings[Math.floor(seed/7)%endings.length]}`;
+ const seed=hash(`${region}-${district}-meta`);
+ const title=titlePatterns[seed%titlePatterns.length](region,district);
+ const kind=districtKind(district);
+ const angle=regionAngles[region]??`${region} 지역 특성`;
+ const openings=[
+  `${region} ${district}에서 포장이사와 이사업체를 비교한다면`,
+  `${district} 이사를 준비하면서 업체와 견적을 알아볼 때는`,
+  `${district} 포장이사 비용을 확인하기 전에`,
+  `${region} ${district}의 이사업체를 찾는다면`,
+  `${district}에서 이사 날짜와 업체를 함께 정할 때는`,
+  `${district} 이사견적을 비교할 때는 금액만 보지 말고`,
+  `${region} ${district} 포장이사를 준비하는 경우`,
+  `${district} 이사업체 선택 전에는`,
+  `${district}에서 출발하거나 도착하는 이사라면`,
+  `${region} ${district} 이사 조건을 확인할 때는`
+ ];
+ const middles=[
+  `${kind}의 차량 접근과 주차거리를 먼저 확인하는 것이 좋습니다.`,
+  `${angle}라는 점을 고려해 층수와 엘리베이터, 차량 정차 위치를 함께 살펴보세요.`,
+  `건물 형태와 운반동선, 사다리차 가능 여부에 따라 실제 작업조건이 달라질 수 있습니다.`,
+  `출발지와 도착지의 도로폭·주차·엘리베이터 조건을 같은 기준으로 비교해 보세요.`,
+  `아파트 관리규정과 골목 진입, 장거리 운반 여부가 견적 차이를 만들 수 있습니다.`,
+  `생활권별 교통량과 건물 접근성을 확인하면 현장 추가비 가능성을 줄이는 데 도움이 됩니다.`,
+  `작업 인원과 차량 톤수보다 먼저 현관까지의 실제 운반동선을 확인해 두는 편이 좋습니다.`,
+  `주말·월말·손없는날에는 예약 수요와 교통조건까지 함께 고려해야 합니다.`,
+  `공동주택은 이사시간과 보양 규정, 저층주거는 골목과 계단 작업을 구분해서 봐야 합니다.`,
+  `${district}의 생활권별 주거형태와 이동시간 차이를 견적 전에 업체에 전달하는 것이 좋습니다.`
+ ];
+ const endings=[
+  `지역 체크포인트와 손없는날·날씨, 이사 준비 순서를 정리했습니다.`,
+  `포장이사 견적 비교 기준과 날짜 선택, 이사 전후 준비사항을 확인할 수 있습니다.`,
+  `차량 접근부터 관리사무소 확인, 생활서비스 이전까지 실제 준비 흐름으로 안내합니다.`,
+  `현장조건과 추가비 확인사항, 주변 지역 이사정보를 함께 살펴보세요.`,
+  `이삿날 선택과 날씨, 전입신고·생활요금 이전까지 필요한 내용을 모았습니다.`,
+  `업체 문의 전에 정리해야 할 현장정보와 계약 전 체크포인트를 안내합니다.`,
+  `포장이사·원룸이사·일반이사별 비교 기준과 지역 특성을 함께 확인하세요.`,
+  `생활권별 작업조건과 견적 항목을 확인한 뒤 여러 업체를 같은 조건으로 비교해 보세요.`,
+  `지역별 이사정보와 일정별 체크리스트를 통해 준비 누락을 줄일 수 있습니다.`,
+  `이사업체 선택에 필요한 지역 특성, 날짜, 현장 체크사항을 한 페이지에서 확인하세요.`
+ ];
+ const description=`${openings[seed%openings.length]} ${middles[Math.floor(seed/5)%middles.length]} ${endings[Math.floor(seed/11)%endings.length]}`;
  return{title,description,robots:{index:true,follow:true}};
 }
 
@@ -28,7 +97,9 @@ export function getRegionalHeroDescription(region:string,district:string){
   `${district} 포장이사 업체를 알아볼 때는 단순 견적 금액보다 포함 서비스와 현장 조건을 먼저 확인해 보세요.`,
   `${district} 이사업체를 비교하고 있다면 포장이사 비용과 작업 범위를 같은 조건으로 확인하는 것이 중요합니다.`,
   `${district} 포장이사를 알아보는 중이라면 업체별 견적과 추가비 발생 조건을 먼저 비교해 보세요.`,
-  `${district} 이사 준비를 시작했다면 포장이사 견적과 함께 차량·인원·작업 범위를 확인해 보세요.`
+  `${district} 이사 준비를 시작했다면 포장이사 견적과 함께 차량·인원·작업 범위를 확인해 보세요.`,
+  `${district}에서 이사할 예정이라면 건물 조건과 이동 동선을 먼저 정리한 뒤 견적을 비교해 보세요.`,
+  `${district} 이사업체를 선택할 때는 출발지와 도착지 조건을 모두 전달하고 같은 기준으로 비교하는 것이 좋습니다.`
  ];
  const localPoints=[
   `${region} ${district}의 주거 형태와 차량 접근, 주차 여건`,
@@ -36,7 +107,9 @@ export function getRegionalHeroDescription(region:string,district:string){
   `${district} 생활권의 도로·주차 환경과 건물별 작업 여건`,
   `${region} ${district}의 주거환경과 엘리베이터·차량 접근 조건`,
   `${district}에서 이사할 때 확인할 층수·주차·운반 동선`,
-  `${district}의 지역 특성과 실제 이사 현장에서 달라질 수 있는 조건`
+  `${district}의 지역 특성과 실제 이사 현장에서 달라질 수 있는 조건`,
+  `${district}의 주요 생활권별 교통과 건물 접근 차이`,
+  `${region} 안에서도 ${district}에서 특히 확인할 차량동선과 작업시간`
  ];
  const endings=[
   `손없는날과 날씨, 이사 체크리스트까지 필요한 정보를 순서대로 정리했습니다.`,
@@ -44,7 +117,9 @@ export function getRegionalHeroDescription(region:string,district:string){
   `손없는날, 지역 날씨, 견적 비교 포인트와 이사 전후 준비사항을 함께 확인하세요.`,
   `날짜별 준비사항과 손없는날·날씨, 이사 비용을 비교할 때 볼 항목까지 안내합니다.`,
   `이사 전 확인할 체크리스트와 날짜·날씨 정보까지 실제 준비 흐름에 맞춰 살펴볼 수 있습니다.`,
-  `포장이사 비교 기준부터 이삿날 선택과 생활정보까지 필요한 내용을 모아 안내합니다.`
+  `포장이사 비교 기준부터 이삿날 선택과 생활정보까지 필요한 내용을 모아 안내합니다.`,
+  `주변 지역과의 이동조건, 관리규정, 추가비 체크사항까지 함께 확인할 수 있습니다.`,
+  `업체 문의 전에 필요한 현장정보를 정리하고 견적 누락을 줄이는 기준을 확인하세요.`
  ];
  return `${openings[seed%openings.length]} ${localPoints[Math.floor(seed/5)%localPoints.length]}을 살펴보고, ${endings[Math.floor(seed/11)%endings.length]}`;
 }
