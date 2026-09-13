@@ -22,4 +22,25 @@ export const jeonbukAdminOffices: Record<string, LocalAdminOffice> = {
     homepageLabel: "진안군 공식 진안읍행정복지센터 안내",
     note: "진안군 내 실제 전입 주소가 다른 면이면 해당 면 행정복지센터를 이용해야 합니다.",
   },
+  "전북|완주군": {
+    officeName: "용진읍행정복지센터",
+    address: "전북특별자치도 완주군 용진읍 완주로 210",
+    homepage: "https://www.wanju.go.kr/index.9is?contentUid=ff8080818b024d8e018b274f82502d20",
+    homepageLabel: "완주군 공식 읍·면 안내",
+    note: "완주군은 삼례읍·봉동읍·용진읍·이서면 등 전입 주소에 따라 관할 행정복지센터가 달라집니다.",
+  },
+  "전북|고창군": {
+    officeName: "고창읍행정복지센터",
+    address: "전북특별자치도 고창군 고창읍 중앙로 330",
+    homepage: "https://www.gochang.go.kr/",
+    homepageLabel: "고창군 공식 홈페이지",
+    note: "고창군 안에서도 실제 전입 주소가 고창읍이 아닌 경우 해당 면 행정복지센터를 확인하세요.",
+  },
+  "전북|부안군": {
+    officeName: "부안읍행정복지센터",
+    address: "전북특별자치도 부안군 부안읍 석정로 182",
+    homepage: "https://www.buan.go.kr/town/",
+    homepageLabel: "부안군 공식 읍·면 홈페이지",
+    note: "부안군은 부안읍과 각 면별 관할 행정복지센터가 다르므로 실제 전입 주소 기준으로 확인하세요.",
+  },
 };
