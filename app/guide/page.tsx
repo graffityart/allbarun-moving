@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { ESTIMATE_INQUIRY_URL } from "@/lib/external-links";
-const SITE_URL=(process.env.NEXT_PUBLIC_SITE_URL||"https://olbarun.kr").replace(/\/$/,"");
+const SITE_URL=(process.env.NEXT_PUBLIC_SITE_URL||"https://5km.kr").replace(/\/$/,"");
 const title="이사 준비 가이드 | 체크리스트·전입신고·생활요금";const description="이사 견적 비교부터 전입신고, 등기사항증명서 확인, 전기·도시가스 이전까지 이사 전후에 필요한 정보를 순서대로 확인하세요.";
 export const metadata:Metadata={title,description,alternates:{canonical:`${SITE_URL}/guide`},openGraph:{title,description,url:`${SITE_URL}/guide`,type:"website",siteName:"올바른이사",locale:"ko_KR"}};
 const guides=[
