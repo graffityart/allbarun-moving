@@ -1,0 +1,1 @@
+Place andong-hero.webp in this directory.
