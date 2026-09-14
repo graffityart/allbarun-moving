@@ -1,9 +1,14 @@
 import type { LocalAdminOffice } from "@/lib/local-admin-office";
 
-const GB_DIRECTORY="https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5230000&mnu_uid=6864&type=dept";
-
 export const gyeongbukAdminOffices:Record<string,LocalAdminOffice>={
- "경북|예천군":{officeName:"예천읍 행정기관",address:"경상북도 예천군 예천읍 군청앞길 2 (서본리 1-6)",homepage:GB_DIRECTORY,homepageLabel:"경상북도 공식 예천군 읍·면 연락처",note:"예천군은 예천읍·호명읍과 각 면별 관할 기관이 다르므로 실제 전입 주소 기준으로 확인하세요."},
+ "경북|예천군":{officeName:"예천읍 행정기관",address:"경상북도 예천군 예천읍 군청앞길 2 (서본리 1-6)",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5230000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 예천군 읍·면 연락처",note:"예천군은 예천읍·호명읍과 각 면별 관할 기관이 다르므로 실제 전입 주소 기준으로 확인하세요."},
  "경북|의성군":{officeName:"의성읍 행정기관",address:"경상북도 의성군 의성읍 후죽3길 5",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5150000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 의성군 읍·면 연락처",note:"의성군은 읍·면별 행정기관이 구분되어 있으므로 의성읍 외 지역은 실제 전입 주소의 면사무소를 확인하세요."},
  "경북|청송군":{officeName:"청송읍 행정기관",address:"경상북도 청송군 청송읍 중앙로 253",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5160000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 청송군 읍·면 연락처",note:"청송군은 청송읍·진보면·주왕산면 등 주소지에 따라 담당 행정기관이 달라집니다."},
+ "경북|영양군":{officeName:"영양읍 행정기관",address:"경상북도 영양군 영양읍 동부리 550-10",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5170000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 영양군 읍·면 연락처",note:"영양군은 영양읍·입암면·청기면·일월면·수비면·석보면별 관할 행정기관이 다릅니다."},
+ "경북|영덕군":{officeName:"영덕읍 행정기관",address:"경상북도 영덕군 영덕읍 우곡길 62",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5180000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 영덕군 읍·면 연락처",note:"영덕군은 영덕읍 외에도 강구·영해·축산 등 읍·면별 담당 기관이 다르므로 전입 주소를 기준으로 확인하세요."},
+ "경북|청도군":{officeName:"청도읍 행정기관",address:"경상북도 청도군 청도읍 청도신기길 83-7",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5190000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 청도군 읍·면 연락처",note:"청도군은 청도읍·화양읍과 각 면별 관할 행정기관이 구분됩니다."},
+ "경북|고령군":{officeName:"대가야읍 행정기관",address:"경상북도 고령군 대가야읍 중앙로 1",homepage:"https://www.gb.go.kr/Main/open_contents/section/archive/page.do?high_dept=5200000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 고령군 읍·면 연락처",note:"고령군은 대가야읍·다산면 등 실제 전입 주소에 따라 이용할 읍·면 행정기관이 달라집니다."},
+ "경북|성주군":{officeName:"성주읍 행정기관",address:"경상북도 성주군 성주읍 성주읍1길 13",homepage:"https://www.gb.go.kr/Main/open_contents/section/finace/page.do?high_dept=5210000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 성주군 읍·면 연락처",note:"성주군은 성주읍과 선남·용암·수륜 등 각 면별 행정기관이 다르므로 주소지 기준으로 확인하세요."},
+ "경북|칠곡군":{officeName:"왜관읍 행정기관",address:"경상북도 칠곡군 왜관읍 2번도로길 16",homepage:"https://www.gb.go.kr/Main/open_contents/section/wel/page.do?high_dept=5220000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 칠곡군 읍·면 연락처",note:"칠곡군은 왜관읍·북삼읍·석적읍과 각 면별 관할 기관이 다르므로 실제 전입 주소를 확인하세요."},
+ "경북|울진군":{officeName:"울진읍 행정기관",address:"경상북도 울진군 울진읍 읍내10길 19",homepage:"https://www.gb.go.kr/Main/open_contents/section/culture/page.do?high_dept=5250000&mnu_uid=6864&type=dept",homepageLabel:"경상북도 공식 울진군 읍·면 연락처",note:"울진군은 울진읍·평해읍과 북면·죽변면·후포면 등 전입 지역에 따라 관할 기관이 달라집니다."},
 };
