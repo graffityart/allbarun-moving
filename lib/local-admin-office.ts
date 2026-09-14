@@ -1,6 +1,7 @@
 import { jeonbukAdminOffices } from "@/lib/local-admin-office-jeonbuk";
 import { jeonnamAdminOffices } from "@/lib/local-admin-office-jeonnam";
 import { gyeongbukAdminOffices } from "@/lib/local-admin-office-gyeongbuk";
+import { gangwonAdminOffices } from "@/lib/local-admin-office-gangwon";
 
 export type LocalAdminOffice = {
   officeName: string;
@@ -22,6 +23,7 @@ const overrides: Record<string, LocalAdminOffice> = {
   ...jeonbukAdminOffices,
   ...jeonnamAdminOffices,
   ...gyeongbukAdminOffices,
+  ...gangwonAdminOffices,
 };
 
 export function getLocalAdminOffice(regionName: string, district: string): LocalAdminOffice {
