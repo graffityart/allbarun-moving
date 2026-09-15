@@ -1,0 +1,1 @@
+Upload goseong-hero.webp to this directory.
