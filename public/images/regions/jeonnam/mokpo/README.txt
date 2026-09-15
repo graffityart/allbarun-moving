@@ -1,0 +1,1 @@
+Upload mokpo-hero.webp to this directory.
