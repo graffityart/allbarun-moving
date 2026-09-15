@@ -1,0 +1,1 @@
+Upload sancheong-hero.webp to this directory.
