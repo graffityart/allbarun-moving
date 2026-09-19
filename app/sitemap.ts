@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { regionProfiles } from "@/lib/regions";
 
 const SITE_UPDATED = new Date("2026-09-13T00:00:00+09:00");
-const REGION_UPDATED = new Date("2026-09-13T00:00:00+09:00");
+const REGION_UPDATED = new Date("2026-09-20T00:00:00+09:00");
 const GUIDE_UPDATED = new Date("2026-08-25T00:00:00+09:00");
 
 export default function sitemap(): MetadataRoute.Sitemap {
