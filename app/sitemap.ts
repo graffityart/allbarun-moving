@@ -1,5 +1,19 @@
 import type { MetadataRoute } from "next";
 import { regionProfiles } from "@/lib/regions";
+import { getDistrictGuide } from "@/lib/district-content";
+import { getGyeonggiGuide } from "@/lib/gyeonggi-content";
+import { getIncheonGuide } from "@/lib/incheon-content";
+import { getBusanGuide } from "@/lib/busan-content";
+import { getDaeguGuide } from "@/lib/daegu-content";
+import { getDaejeonGuide } from "@/lib/daejeon-content";
+import { getGwangjuGuide } from "@/lib/gwangju-content";
+import { getUlsanGuide } from "@/lib/ulsan-content";
+import { getRemainingRegionGuide } from "@/lib/remaining-regions-content";
+import { getRegionalOverride } from "@/lib/regional-overrides";
+
+function hasLocalGuide(region:string,district:string){
+ return Boolean(getRegionalOverride(region,district)??(region==="서울"?getDistrictGuide(region,district):region==="경기"?getGyeonggiGuide(district):region==="인천"?getIncheonGuide(district):region==="부산"?getBusanGuide(district):region==="대구"?getDaeguGuide(district):region==="대전"?getDaejeonGuide(district):region==="광주"?getGwangjuGuide(district):region==="울산"?getUlsanGuide(district):getRemainingRegionGuide(region,district)));
+}
 
 const SITE_UPDATED = new Date("2026-09-13T00:00:00+09:00");
 const REGION_UPDATED = new Date("2026-09-20T00:00:00+09:00");
@@ -33,7 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const regional: MetadataRoute.Sitemap = regionProfiles.flatMap((region) =>
-    region.districts.map((district) => ({
+    region.districts.filter((district)=>hasLocalGuide(region.name,district)).map((district) => ({
       url: `${base}/moving/${region.slug}/${encodeURIComponent(district)}`,
       lastModified: REGION_UPDATED,
       changeFrequency: "monthly" as const,
