@@ -60,7 +60,7 @@ export function getRemainingRegionGuide(region: string, district: string): Local
   const supported = ["세종","강원","충북","충남","전북","전남","경북","경남","제주"];
   if (!supported.includes(region)) return undefined;
   const seed = seeds[region]?.[district];
-  if (!seed) return genericGuide(region, district);
+  if (!seed) return undefined;
   return {
     localIntro: `${district}는 ${seed.focus} 실제 견적에서는 같은 ${district} 안에서도 출발지와 도착지의 건물 형태와 주차 위치에 따라 작업시간이 달라질 수 있습니다.`,
     localChecklist:[`${seed.zones[0]} 생활권의 건물·단지 규정 확인`,`${seed.zones[1]} 생활권의 차량 정차와 운반거리 확인`,seed.road,"사다리차·엘리베이터·계단 작업 여부를 견적서에 구분해 확인"],
