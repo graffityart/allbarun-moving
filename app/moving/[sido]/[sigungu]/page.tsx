@@ -40,13 +40,14 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
  const{region,district}=data;
  const meta=getRegionalMeta(region.name,district);
  const local=resolveLocalGuide(region.name,district);
+ const hasResearchedLocalGuide=Boolean(getRegionalOverride(region.name,district)??(region.name==="서울"?getDistrictGuide(region.name,district):region.name==="경기"?getGyeonggiGuide(district):region.name==="인천"?getIncheonGuide(district):region.name==="부산"?getBusanGuide(district):region.name==="대구"?getDaeguGuide(district):region.name==="대전"?getDaejeonGuide(district):region.name==="광주"?getGwangjuGuide(district):region.name==="울산"?getUlsanGuide(district):getRemainingRegionGuide(region.name,district)));
  const primaryArea=local.neighborhoods?.[0]?.name;
  const secondaryArea=local.neighborhoods?.[1]?.name;
  const localAreas=[primaryArea,secondaryArea].filter(Boolean).join("·");
  const title=`${district} 포장이사·이사업체 | ${localAreas?`${localAreas} `:""}지역 이사정보`;
  const description=`${local.localIntro} ${localAreas?`${localAreas} 등 ${district} 생활권의 `:`${district} `}차량 접근·주거형태·운반동선과 포장이사 견적 비교사항을 확인하세요.`;
  const url=`${SITE_URL}/moving/${encodeURIComponent(sido)}/${encodeURIComponent(district)}`;
- return{...meta,title,description,alternates:{canonical:url},openGraph:{title,description,type:"website",url,siteName:"올바른이사",locale:"ko_KR"}};
+ return{...meta,title,description,robots:hasResearchedLocalGuide?{index:true,follow:true}:{index:false,follow:true},alternates:{canonical:url},openGraph:{title,description,type:"website",url,siteName:"올바른이사",locale:"ko_KR"}};
 }
 
 export default async function DistrictPage({params}:Props){
