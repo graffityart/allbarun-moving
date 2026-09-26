@@ -15,8 +15,8 @@ function hasLocalGuide(region:string,district:string){
  return Boolean(getRegionalOverride(region,district)??(region==="서울"?getDistrictGuide(region,district):region==="경기"?getGyeonggiGuide(district):region==="인천"?getIncheonGuide(district):region==="부산"?getBusanGuide(district):region==="대구"?getDaeguGuide(district):region==="대전"?getDaejeonGuide(district):region==="광주"?getGwangjuGuide(district):region==="울산"?getUlsanGuide(district):getRemainingRegionGuide(region,district)));
 }
 
-const SITE_UPDATED=new Date("2026-09-25T00:00:00+09:00");
-const REGION_UPDATED=new Date("2026-09-25T00:00:00+09:00");
+const SITE_UPDATED=new Date("2026-09-26T00:00:00+09:00");
+const REGION_UPDATED=new Date("2026-09-26T00:00:00+09:00");
 const GUIDE_UPDATED=new Date("2026-08-25T00:00:00+09:00");
 
 export default function sitemap():MetadataRoute.Sitemap{
