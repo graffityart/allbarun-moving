@@ -12,12 +12,16 @@ type LocalSection={
 function hash(text:string){return [...text].reduce((sum,ch)=>sum+ch.charCodeAt(0),0)}
 function pick<T>(items:T[],seed:number,offset=0){return items[(seed+offset)%items.length]}
 
-export function getLocalPagePresentation(region:string,district:string,local:LocalGuide,regionData:{housing:string;access:string;traffic:string}){
+export function getLocalPagePresentation(region:string,district:string,local:LocalGuide,_regionData:{housing:string;access:string;traffic:string}){
   const seed=hash(`${region}-${district}-presentation`);
-  const areas=(local.neighborhoods??[]).map(x=>x.name);
-  const tags=Array.from(new Set((local.neighborhoods??[]).flatMap(x=>x.tags??[])));
+  const neighborhoods=local.neighborhoods??[];
+  const areas=neighborhoods.map(x=>x.name);
+  const tags=Array.from(new Set(neighborhoods.flatMap(x=>x.tags??[])));
   const a=areas[0]??district,b=areas[1]??areas[0]??district;
   const f1=tags[0]??"차량 접근",f2=tags[1]??"주차·운반",f3=tags[2]??"건물 규정";
+  const housing=neighborhoods[0]?.note??local.localIntro;
+  const access=neighborhoods[1]?.note??local.localChecklist[0]??local.movingNote;
+  const traffic=local.localChecklist.find(x=>/교통|정체|시간|도로|진입|차량|주차/.test(x))??neighborhoods[2]?.note??local.localChecklist[1]??local.movingNote;
 
   const heroKickers=[`${region} ${district} 현장형 이사 가이드`,`${district} 생활권별 이사 준비`,`${region} ${district} 포장이사 현장정보`,`${district} 이사 전 확인 가이드`];
   const heroTitles=[
@@ -39,9 +43,9 @@ export function getLocalPagePresentation(region:string,district:string,local:Loc
     `${a} 생활권과 ${b} 생활권은 정차 위치, 건물 출입 방식과 예상 운반시간이 서로 다를 수 있습니다. ${local.movingNote}`
   ];
   const cardSets=[
-    [{title:`${a} 주거·건물`,body:regionData.housing},{title:`${f1} 확인`,body:regionData.access},{title:"시간대·이동",body:regionData.traffic}],
-    [{title:`${district} 건물 조건`,body:regionData.housing},{title:`${a} 차량 동선`,body:regionData.access},{title:`${b} 이동 계획`,body:regionData.traffic}],
-    [{title:"출발지 체크",body:`출발지가 ${a} 생활권이라면 층수, 엘리베이터와 차량 정차 위치를 먼저 확인하세요.`},{title:"도착지 체크",body:`도착지가 ${b} 생활권이라면 건물 규정과 현관까지의 운반동선을 따로 확인하세요.`},{title:`${f3}·교통`,body:`${regionData.traffic} ${f3} 관련 조건도 일정 확정 전에 확인하는 편이 좋습니다.`}]
+    [{title:`${a} 주거·건물`,body:housing},{title:`${f1} 확인`,body:access},{title:"시간대·이동",body:traffic}],
+    [{title:`${district} 건물 조건`,body:housing},{title:`${a} 차량 동선`,body:access},{title:`${b} 이동 계획`,body:traffic}],
+    [{title:"출발지 체크",body:`출발지가 ${a} 생활권이라면 층수, 엘리베이터와 차량 정차 위치를 먼저 확인하세요.`},{title:"도착지 체크",body:`도착지가 ${b} 생활권이라면 건물 규정과 현관까지의 운반동선을 따로 확인하세요.`},{title:`${f3}·교통`,body:`${traffic} ${f3} 관련 조건도 일정 확정 전에 확인하는 편이 좋습니다.`}]
   ];
 
   const localChecklist=local.localChecklist.slice(0,5);
