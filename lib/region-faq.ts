@@ -25,12 +25,12 @@ export function getRegionFaq(regionName:string,district:string,local?:LocalGuide
   };
   const extra:RegionFaq={
     question:extraQuestions[(h+1)%extraQuestions.length],
-    answer:localCheck?`${district}에서는 특히 ${localCheck} 항목을 미리 확인해 두는 것이 좋습니다. 계약 당시보다 짐이 늘거나 차량 진입·계단 작업 조건이 달라지면 추가비가 생길 수 있으므로 출발지와 도착지 사진을 함께 전달하세요.`:`계약 당시보다 짐이 늘거나 차량이 건물 가까이 진입하지 못하는 경우, 계단 작업이나 대형가구 분해·조립이 새로 필요한 경우에는 비용이 달라질 수 있습니다. ${district} 출발지와 도착지의 실제 작업조건을 사진과 함께 미리 전달하면 비교가 쉬워집니다.`
+    answer:localCheck?`${district} 이사에서는 지역별 현장조건을 견적 전에 확인하는 것이 중요합니다. 우선 확인할 내용은 다음과 같습니다. ${localCheck}. 계약 당시보다 짐이 늘거나 차량 진입·계단 작업 조건이 달라지면 추가비가 생길 수 있으므로 출발지와 도착지 사진을 함께 전달하세요.`:`계약 당시보다 짐이 늘거나 차량이 건물 가까이 진입하지 못하는 경우, 계단 작업이나 대형가구 분해·조립이 새로 필요한 경우에는 비용이 달라질 수 있습니다. ${district} 출발지와 도착지의 실제 작업조건을 사진과 함께 미리 전달하면 비교가 쉬워집니다.`
   };
 
   const dateAnswers=[
     `손없는날은 전통적인 날짜 선택 기준으로 참고할 수 있지만 반드시 그날 이사해야 하는 것은 아닙니다. 예약 가능 여부, 견적, ${district} 지역 날씨와 교통상황을 함께 비교해 날짜를 정하는 것이 실용적입니다.`,
-    `${district} 이사 날짜는 손없는날보다 건물 예약시간과 업체 가능 일정, 강수·기온 예보를 함께 보는 편이 좋습니다. ${areaA?`${areaA} 같은 주요 생활권은 `:""}주차와 교통조건도 당일 작업시간에 영향을 줄 수 있습니다.`,
+    `${district} 이사 날짜는 손없는날보다 건물 예약시간과 업체 가능 일정, 강수·기온 예보를 함께 보는 편이 좋습니다. ${areaA?`${areaA} 생활권은 `:""}주차와 교통조건도 당일 작업시간에 영향을 줄 수 있습니다.`,
     `날짜를 먼저 고정하기보다 ${district}의 주말·월말 수요와 날씨를 확인한 뒤 업체 일정을 비교해 보세요. 공동주택이라면 엘리베이터 예약 가능시간도 같은 날에 맞춰야 합니다.`
   ];
   const date:RegionFaq={question:dateQuestions[(h+2)%dateQuestions.length],answer:dateAnswers[h%dateAnswers.length]};
@@ -50,8 +50,8 @@ export function getRegionFaq(regionName:string,district:string,local?:LocalGuide
   const utility:RegionFaq={question:`${district} 이사 전 전기와 도시가스는 언제 신청하는 것이 좋나요?`,answer:utilityAnswers[Math.floor(h/5)%utilityAnswers.length]};
 
   const localAreaFaq:RegionFaq|undefined=areaA&&areaB?{
-    question:`${district} ${areaA}와 ${areaB}는 이사 조건이 많이 다른가요?`,
-    answer:localIntro?`${localIntro} 특히 ${areaA}와 ${areaB}처럼 생활권이 달라지면 주차 위치와 건물 형태, 차량 접근조건도 달라질 수 있어 양쪽 주소를 각각 확인하는 것이 좋습니다.`:`같은 ${district} 안에서도 ${areaA}와 ${areaB}처럼 생활권이 달라지면 주거형태, 차량 정차 위치, 도로 폭과 작업시간 조건이 달라질 수 있습니다. 주소만 전달하기보다 건물 형태와 주차 위치, 엘리베이터·계단 여부를 각각 확인하는 것이 좋습니다.`
+    question:`${district}에서 ${areaA} 생활권과 ${areaB} 생활권은 이사 조건이 많이 다른가요?`,
+    answer:localIntro?`${localIntro} ${areaA} 생활권과 ${areaB} 생활권처럼 위치가 달라지면 주차 지점, 건물 형태와 차량 접근조건도 달라질 수 있어 출발지와 도착지 주소를 각각 확인하는 것이 좋습니다.`:`같은 ${district} 안에서도 ${areaA} 생활권과 ${areaB} 생활권은 주거형태, 차량 정차 위치, 도로 폭과 작업시간 조건이 다를 수 있습니다. 주소만 전달하기보다 건물 형태와 주차 위치, 엘리베이터·계단 여부를 각각 확인하는 것이 좋습니다.`
   }:undefined;
 
   const countyAnswers=[
