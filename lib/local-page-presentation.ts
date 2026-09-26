@@ -10,7 +10,6 @@ type LocalSection={
 };
 
 function hash(text:string){return [...text].reduce((sum,ch)=>sum+ch.charCodeAt(0),0)}
-
 function pick<T>(items:T[],seed:number,offset=0){return items[(seed+offset)%items.length]}
 
 export function getLocalPagePresentation(region:string,district:string,local:LocalGuide,regionData:{housing:string;access:string;traffic:string}){
@@ -22,23 +21,27 @@ export function getLocalPagePresentation(region:string,district:string,local:Loc
 
   const heroKickers=[`${region} ${district} 현장형 이사 가이드`,`${district} 생활권별 이사 준비`,`${region} ${district} 포장이사 현장정보`,`${district} 이사 전 확인 가이드`];
   const heroTitles=[
-    `${district} 포장이사,\n${a}부터 현장조건을 확인하세요.`,
+    `${district} 포장이사,\n${a} 생활권부터 현장조건을 확인하세요.`,
     `${a}·${b} 이사,\n같은 ${district}라도 조건은 다릅니다.`,
     `${district} 이사업체 비교 전,\n${f1}부터 확인하세요.`,
     `${district} 이사 준비,\n생활권과 건물조건을 함께 보세요.`
   ];
 
   const sectionTitles=[
-    `${a}·${b}에서 달라지는 ${district} 이사 조건`,
+    `${a}·${b} 생활권에서 달라지는 ${district} 이사 조건`,
     `${district} 견적 전에 확인할 ${f1}·${f2}`,
     `${district} 생활권에 맞춰 보는 이사 현장정보`,
     `${district}에서 작업시간을 바꾸는 세 가지 조건`
   ];
-  const sectionDescriptions=[local.movingNote,`${local.localIntro} 견적 요청 전에는 출발지와 도착지의 조건을 나눠 전달하는 편이 비교에 유리합니다.`,`${a}와 ${b}처럼 생활권이 달라지면 정차 위치, 건물 출입 방식과 예상 운반시간도 달라질 수 있습니다. ${local.movingNote}`];
+  const sectionDescriptions=[
+    local.movingNote,
+    `${local.localIntro} 견적 요청 전에는 출발지와 도착지 조건을 각각 전달하면 비교하기 쉽습니다.`,
+    `${a} 생활권과 ${b} 생활권은 정차 위치, 건물 출입 방식과 예상 운반시간이 서로 다를 수 있습니다. ${local.movingNote}`
+  ];
   const cardSets=[
     [{title:`${a} 주거·건물`,body:regionData.housing},{title:`${f1} 확인`,body:regionData.access},{title:"시간대·이동",body:regionData.traffic}],
     [{title:`${district} 건물 조건`,body:regionData.housing},{title:`${a} 차량 동선`,body:regionData.access},{title:`${b} 이동 계획`,body:regionData.traffic}],
-    [{title:"출발지 체크",body:`${a}을 포함한 출발지의 층수, 엘리베이터와 차량 정차 위치를 먼저 확인하세요.`},{title:"도착지 체크",body:`${b}을 포함한 도착지의 건물 규정과 현관까지 운반동선을 따로 확인하세요.`},{title:`${f3}·교통`,body:`${regionData.traffic} ${f3} 관련 조건도 일정 확정 전에 확인하는 편이 좋습니다.`}]
+    [{title:"출발지 체크",body:`출발지가 ${a} 생활권이라면 층수, 엘리베이터와 차량 정차 위치를 먼저 확인하세요.`},{title:"도착지 체크",body:`도착지가 ${b} 생활권이라면 건물 규정과 현관까지의 운반동선을 따로 확인하세요.`},{title:`${f3}·교통`,body:`${regionData.traffic} ${f3} 관련 조건도 일정 확정 전에 확인하는 편이 좋습니다.`}]
   ];
 
   const localChecklist=local.localChecklist.slice(0,5);
@@ -59,7 +62,7 @@ export function getLocalPagePresentation(region:string,district:string,local:Loc
   };
 
   const areaHeading=pick([`${areas.slice(0,2).join("·")||district} 등 생활권별 차이`,`${district} 안에서도 달라지는 작업조건`,`${district} 주요 생활권 현장 비교`,`${a}부터 ${b}까지 생활권 체크`],seed,6);
-  const areaDescription=areas.length?`${areas.join(" · ")}을 기준으로 차량 진입, 건물 형태와 작업시간에 영향을 주는 조건을 나눠 확인해 보세요.`:`${district}의 주거형태와 차량 접근조건을 출발지·도착지별로 확인해 보세요.`;
+  const areaDescription=areas.length?`${areas.join(" · ")} 생활권을 기준으로 차량 진입, 건물 형태와 작업시간에 영향을 주는 조건을 나눠 확인해 보세요.`:`${district}의 주거형태와 차량 접근조건을 출발지·도착지별로 확인해 보세요.`;
   const officeHeading=pick([`${district} 사무실·상가 이전은 무엇이 다를까요?`,`${district} 업무시설 이전 체크포인트`,`${district} 사무실이사, 반입규정부터 확인하세요`],seed,7);
   const nearbyHeading=pick([`${district} 주변 지역도 함께 비교하기`,`${district} 인접 지역 이사정보`,`${district}에서 가까운 지역 가이드`],seed,8);
 
